@@ -1,0 +1,106 @@
+version: "3"
+
+services:
+  runner:
+    image: ghcr.io/bob-cd/runner
+    networks:
+      - bob-net
+    depends_on:
+      - storage
+      - queue
+    environment:
+      BOB_STORAGE_URLS: http://storage:2379
+      BOB_QUEUE_URL: amqp://queue:5672
+      BOB_STREAM_URL: rabbitmq-stream://guest:guest@queue:5552/%2f
+      BOB_QUEUE_API_URL: http://queue:15672/api
+    user: podman
+    devices:
+      - /dev/fuse
+    security_opt:
+      - label=disable
+      # for podman-static
+      #- unmask=/proc/*
+      # next 2 are needed for rootless docker/containerd
+      - seccomp=unconfined
+      - apparmor=unconfined
+
+  apiserver:
+    image: ghcr.io/bob-cd/apiserver
+    ports:
+      - 7777:7777
+    networks:
+      - bob-net
+    depends_on:
+      - queue
+      - storage
+    environment:
+      BOB_STORAGE_URLS: http://storage:2379
+      BOB_QUEUE_URL: amqp://queue:5672
+      BOB_STREAM_URL: rabbitmq-stream://guest:guest@queue:5552/%2f
+      BOB_QUEUE_API_URL: http://queue:15672/api
+
+  queue:
+    image: docker.io/library/rabbitmq:4-management-alpine
+    entrypoint: sh
+    command:
+      - -c
+      - rabbitmq-plugins enable --offline rabbitmq_stream && rabbitmq-server
+    networks:
+      - bob-net
+    ports:
+      - 5672:5672
+      - 15672:15672
+      - 5552:5552
+    volumes:
+      - queuedata:/var/lib/rabbitmq/mnesia
+    environment:
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbitmq_stream advertised_host queue
+
+  storage:
+    image: quay.io/coreos/etcd:v3.6.5
+    networks:
+      - bob-net
+    ports:
+      - 2379:2379
+    environment:
+      ALLOW_NONE_AUTHENTICATION: "yes"
+      ETCD_ADVERTISE_CLIENT_URLS: http://bob-etcd.etcd:2379
+      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+      ETCD_NAME: bob-etcd
+      ETCD_DATA_DIR: /var/lib/etcd/data
+    volumes:
+      - dbdata:/var/lib/etcd/data
+
+  artifact-local:
+    image: ghcr.io/bob-cd/artifact-local
+    networks:
+      - bob-net
+    ports:
+      - 8001:8001
+    volumes:
+      - artifactdata:/opt/artifacts
+
+  resource-git:
+    image: ghcr.io/bob-cd/resource-git
+    networks:
+      - bob-net
+    ports:
+      - 8000:8000
+
+  logger-local:
+    image: ghcr.io/bob-cd/logger-local
+    networks:
+      - bob-net
+    ports:
+      - 8002:8002
+    volumes:
+      - logs:/opt/logs
+
+networks:
+  bob-net:
+
+volumes:
+  dbdata:
+  artifactdata:
+  logs:
+  queuedata:
