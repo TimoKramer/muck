@@ -2,10 +2,8 @@ package muck.client;
 
 import io.helidon.http.Status;
 import io.helidon.webclient.http1.Http1Client;
-import io.helidon.webclient.http1.Http1ClientResponse;
 import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import muck.model.Pipeline;
 
 import java.util.List;
@@ -59,21 +57,23 @@ public class BobClient {
 
     /**
      * Fetch all pipelines from Bob API
-     * GET /api/pipelines
+     * GET /pipelines
+     * Returns: {"message": [{"name": "...", "group": "..."}, ...]}
      */
     public List<Pipeline> listPipelines() {
         try {
-            var response = client.get("/api/pipelines").request();
+            var response = client.get("/pipelines").request();
 
             if (response.status() != Status.OK_200) {
                 LOGGER.log(Level.WARNING, "Failed to fetch pipelines: {0}", response.status());
                 return List.of();
             }
 
-            // Parse response as list of maps
-            List<Map<String, Object>> pipelinesData = response.as(List.class);
+            // Bob API returns: {"message": [...]} wrapper
+            Map<String, Object> body = response.as(Map.class);
+            List<Map<String, Object>> pipelinesData = (List<Map<String, Object>>) body.get("message");
+
             var pipelines = pipelinesData.stream()
-                    .filter(data -> data.get("name") != null)
                     .map(data -> new Pipeline(
                             (String) data.get("group"),
                             (String) data.get("name")))
@@ -90,11 +90,11 @@ public class BobClient {
 
     /**
      * Get the status of a specific pipeline
-     * GET /api/pipelines/{group}/{name}/status
+     * GET /pipelines/{group}/{name}/status
      */
     public String getPipelineStatus(String group, String name) {
         try {
-            var path = "/api/pipelines/%s/%s/status".formatted(group, name);
+            var path = "/pipelines/%s/%s/status".formatted(group, name);
             var response = client.get(path).request();
 
             if (response.status() != Status.OK_200) {
@@ -112,11 +112,11 @@ public class BobClient {
 
     /**
      * Start a pipeline
-     * POST /api/pipelines/{group}/{name}/start
+     * POST /pipelines/{group}/{name}/start
      */
     public boolean startPipeline(String group, String name) {
         try {
-            var path = "/api/pipelines/%s/%s/start".formatted(group, name);
+            var path = "/pipelines/%s/%s/start".formatted(group, name);
             var response = client.post(path).request();
 
             return response.status() == Status.ACCEPTED_202;
