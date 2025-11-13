@@ -10,8 +10,6 @@ import muck.client.BobClient;
 import muck.model.Pipeline;
 
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,21 +33,20 @@ public class PipelineHandler implements Handler {
     public void handle(ServerRequest req, ServerResponse res) {
         try {
             // Fetch pipelines from Bob API
-            List<Pipeline> pipelines = bobClient.listPipelines();
+            var pipelines = bobClient.listPipelines();
 
             // Fetch status for each pipeline (optional - can be slow)
-            // Uncomment if you want to show status
-            // for (Pipeline pipeline : pipelines) {
-            //     String status = bobClient.getPipelineStatus(pipeline.getGroup(), pipeline.getName());
-            //     pipeline.setStatus(status);
-            // }
+            // Uncomment if you want to show status with real-time data:
+            // var pipelinesWithStatus = pipelines.stream()
+            //     .map(p -> p.withStatus(
+            //         bobClient.getPipelineStatus(p.group(), p.name())))
+            //     .toList();
 
-            Template template = freemarkerConfig.getTemplate("pipelines.ftl");
+            var template = freemarkerConfig.getTemplate("pipelines.ftl");
 
-            Map<String, Object> model = new HashMap<>();
-            model.put("pipelines", pipelines);
+            var model = Map.of("pipelines", pipelines);
 
-            StringWriter writer = new StringWriter();
+            var writer = new StringWriter();
             template.process(model, writer);
 
             res.status(Status.OK_200);

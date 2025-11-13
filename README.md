@@ -119,10 +119,21 @@ mvn test
 
 ### Code Style
 
-- Java 21+ features encouraged
-- Use virtual threads for I/O operations
-- Keep handlers simple and focused
-- Templates contain only presentation logic
+This project uses modern Java 21+ syntax. See **[JAVA_STYLE.md](JAVA_STYLE.md)** for detailed guidelines including:
+
+- Type inference with `var`
+- Records for data classes
+- Switch expressions
+- Text blocks
+- Streams and functional programming
+- Code organization and formatting
+
+Quick summary:
+- Use `var` where type is obvious
+- Prefer records over traditional classes for data
+- Use switch expressions over statements
+- Leverage Java 21+ features
+- See `.editorconfig` for formatting rules
 
 ## HTMX + DaisyUI Features
 

@@ -9,7 +9,6 @@ import io.helidon.webserver.http.ServerResponse;
 import muck.client.BobClient;
 
 import java.io.StringWriter;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,13 +31,14 @@ public class HomeHandler implements Handler {
     @Override
     public void handle(ServerRequest req, ServerResponse res) {
         try {
-            Template template = freemarkerConfig.getTemplate("index.ftl");
+            var template = freemarkerConfig.getTemplate("index.ftl");
 
-            Map<String, Object> model = new HashMap<>();
-            model.put("title", "Muck - Bob CI/CD Monitor");
-            model.put("bobUrl", bobClient.getBaseUrl());
+            var model = Map.of(
+                    "title", "Muck - Bob CI/CD Monitor",
+                    "bobUrl", bobClient.getBaseUrl()
+            );
 
-            StringWriter writer = new StringWriter();
+            var writer = new StringWriter();
             template.process(model, writer);
 
             res.status(Status.OK_200);
