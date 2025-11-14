@@ -1,18 +1,20 @@
 package muck.client;
 
-import io.helidon.http.Status;
-import io.helidon.webclient.http1.Http1Client;
-import io.swagger.parser.OpenAPIParser;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.Operation;
-import io.swagger.v3.oas.models.PathItem;
-import muck.model.Pipeline;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import io.helidon.http.Method;
+import io.helidon.http.Status;
+import io.helidon.webclient.http1.Http1Client;
+import io.helidon.webclient.http1.Http1ClientResponse;
+import io.swagger.parser.OpenAPIParser;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import muck.model.Pipeline;
 
 /**
  * Client for interacting with the Bob CI/CD REST API.
@@ -31,22 +33,20 @@ public class BobClient {
         this.client = Http1Client.builder()
                 .baseUri(baseUrl)
                 .build();
-        this.openApiSpec = loadOpenApiSpec();
-        this.operations = parseOperations();
+        this.openApiSpec = loadOpenApiSpec(this.client);
+        this.operations = parseOperations(this.openApiSpec);
     }
 
-    private OpenAPI loadOpenApiSpec() {
+    private OpenAPI loadOpenApiSpec(Http1Client client) {
         try {
-            var specStream = getClass().getClassLoader()
-                    .getResourceAsStream("api.yaml");
-            if (specStream == null) {
-                LOGGER.warning("Could not load api.yaml from resources");
+            var response = client.get("/api.yaml").request();
+            if (response.status() != Status.OK_200) {
+                LOGGER.log(Level.WARNING, "Failed to fetch OpenAPI spec from server: {0}", response.status());
                 return null;
             }
 
-            // Parse OpenAPI spec from classpath
             var result = new OpenAPIParser()
-                    .readContents(new String(specStream.readAllBytes()), null, null);
+                    .readContents(response.as(String.class), null, null);
 
             if (result.getMessages() != null && !result.getMessages().isEmpty()) {
                 LOGGER.log(Level.WARNING, "OpenAPI spec parsing warnings: {0}", result.getMessages());
@@ -62,8 +62,10 @@ public class BobClient {
 
     /**
      * Parse all operations from the OpenAPI spec and map them by operationId
+     *
+     * @param openApiSpec2
      */
-    private Map<String, ApiOperation> parseOperations() {
+    private Map<String, ApiOperation> parseOperations(OpenAPI openApiSpec) {
         var ops = new HashMap<String, ApiOperation>();
 
         if (openApiSpec == null || openApiSpec.getPaths() == null) {
@@ -102,6 +104,14 @@ public class BobClient {
     }
 
     /**
+     * Execute an HTTP request dynamically using the method from the operation
+     */
+    private Http1ClientResponse executeRequest(ApiOperation op, String path) {
+        var method = Method.valueOf(op.method());
+        return client.method(method).path(path).request();
+    }
+
+    /**
      * Fetch all pipelines from Bob API
      * Uses operationId: PipelineList
      * Returns: {"message": [{"name": "...", "group": "..."}, ...]}
@@ -109,7 +119,7 @@ public class BobClient {
     public List<Pipeline> listPipelines() {
         try {
             var op = getOperation("PipelineList");
-            var response = client.get(op.path()).request();
+            var response = executeRequest(op, op.path());
 
             if (response.status() != Status.OK_200) {
                 LOGGER.log(Level.WARNING, "Failed to fetch pipelines: {0}", response.status());
@@ -145,7 +155,7 @@ public class BobClient {
             var path = op.path()
                     .replace("{group}", group)
                     .replace("{name}", name);
-            var response = client.get(path).request();
+            var response = executeRequest(op, path);
 
             if (response.status() != Status.OK_200) {
                 return "unknown";
@@ -170,7 +180,7 @@ public class BobClient {
             var path = op.path()
                     .replace("{group}", group)
                     .replace("{name}", name);
-            var response = client.post(path).request();
+            var response = executeRequest(op, path);
 
             return response.status() == Status.ACCEPTED_202;
         } catch (Exception e) {
