@@ -16,10 +16,6 @@ import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import muck.model.Pipeline;
 
-/**
- * Client for interacting with the Bob CI/CD REST API.
- * Operations are dynamically loaded from the OpenAPI specification.
- */
 public class BobClient {
     private static final Logger LOGGER = Logger.getLogger(BobClient.class.getName());
 
@@ -60,11 +56,6 @@ public class BobClient {
         }
     }
 
-    /**
-     * Parse all operations from the OpenAPI spec and map them by operationId
-     *
-     * @param openApiSpec2
-     */
     private Map<String, ApiOperation> parseOperations(OpenAPI openApiSpec) {
         var ops = new HashMap<String, ApiOperation>();
 
@@ -74,27 +65,18 @@ public class BobClient {
         }
 
         openApiSpec.getPaths().forEach((path, pathItem) -> {
-            addOperation(ops, path, pathItem.getGet(), "GET");
-            addOperation(ops, path, pathItem.getPost(), "POST");
-            addOperation(ops, path, pathItem.getPut(), "PUT");
-            addOperation(ops, path, pathItem.getDelete(), "DELETE");
-            addOperation(ops, path, pathItem.getPatch(), "PATCH");
+            pathItem.readOperationsMap().forEach((httpMethod, operation) -> {
+                if (operation.getOperationId() != null) {
+                    var apiOp = new ApiOperation(operation.getOperationId(), path, Method.create(httpMethod.name()));
+                    ops.put(operation.getOperationId(), apiOp);
+                }
+            });
         });
 
         LOGGER.log(Level.INFO, "Parsed {0} API operations from OpenAPI spec", ops.size());
         return ops;
     }
 
-    private void addOperation(Map<String, ApiOperation> ops, String path, Operation operation, String method) {
-        if (operation != null && operation.getOperationId() != null) {
-            var apiOp = new ApiOperation(operation.getOperationId(), path, method);
-            ops.put(operation.getOperationId(), apiOp);
-        }
-    }
-
-    /**
-     * Get an API operation by its operationId
-     */
     private ApiOperation getOperation(String operationId) {
         var op = operations.get(operationId);
         if (op == null) {
@@ -103,23 +85,14 @@ public class BobClient {
         return op;
     }
 
-    /**
-     * Execute an HTTP request dynamically using the method from the operation
-     */
-    private Http1ClientResponse executeRequest(ApiOperation op, String path) {
-        var method = Method.valueOf(op.method());
+    private Http1ClientResponse executeRequest(Method method, String path) {
         return client.method(method).path(path).request();
     }
 
-    /**
-     * Fetch all pipelines from Bob API
-     * Uses operationId: PipelineList
-     * Returns: {"message": [{"name": "...", "group": "..."}, ...]}
-     */
     public List<Pipeline> listPipelines() {
         try {
             var op = getOperation("PipelineList");
-            var response = executeRequest(op, op.path());
+            var response = executeRequest(op.method(), op.path());
 
             if (response.status() != Status.OK_200) {
                 LOGGER.log(Level.WARNING, "Failed to fetch pipelines: {0}", response.status());
@@ -145,17 +118,13 @@ public class BobClient {
         }
     }
 
-    /**
-     * Get the status of a specific pipeline
-     * Uses operationId: PipelineStatus
-     */
     public String getPipelineStatus(String group, String name) {
         try {
             var op = getOperation("PipelineStatus");
             var path = op.path()
                     .replace("{group}", group)
                     .replace("{name}", name);
-            var response = executeRequest(op, path);
+            var response = executeRequest(op.method(), path);
 
             if (response.status() != Status.OK_200) {
                 return "unknown";
@@ -170,17 +139,13 @@ public class BobClient {
         }
     }
 
-    /**
-     * Start a pipeline
-     * Uses operationId: PipelineStart
-     */
     public boolean startPipeline(String group, String name) {
         try {
             var op = getOperation("PipelineStart");
             var path = op.path()
                     .replace("{group}", group)
                     .replace("{name}", name);
-            var response = executeRequest(op, path);
+            var response = executeRequest(op.method(), path);
 
             return response.status() == Status.ACCEPTED_202;
         } catch (Exception e) {
