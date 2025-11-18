@@ -72,27 +72,6 @@ bob:
   url: "http://localhost:7777"  # Bob API URL
 ```
 
-## Project Structure
-
-```
-src/main/java/muck/
-├── Main.java                    # Application entry point
-├── client/
-│   └── BobClient.java           # REST client for Bob API
-├── handlers/
-│   ├── HomeHandler.java         # Main page handler
-│   └── PipelineHandler.java    # Pipeline list handler (HTMX)
-└── model/
-    └── Pipeline.java            # Pipeline data model
-
-src/main/resources/
-├── api.yaml                     # Bob OpenAPI specification
-├── application.yaml             # Application configuration
-└── templates/
-    ├── index.ftl                # Main page template
-    └── pipelines.ftl            # Pipeline list fragment
-```
-
 ## Technology Stack
 
 - **[Helidon Nima](https://helidon.io/)**: Modern Java web framework with virtual threads

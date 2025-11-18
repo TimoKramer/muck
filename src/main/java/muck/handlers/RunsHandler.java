@@ -12,13 +12,13 @@ import io.helidon.webserver.http.ServerRequest;
 import io.helidon.webserver.http.ServerResponse;
 import muck.client.BobClient;
 
-public class PipelineHandler implements Handler {
-    private static final Logger LOGGER = Logger.getLogger(PipelineHandler.class.getName());
+public class RunsHandler implements Handler {
+    private static final Logger LOGGER = Logger.getLogger(RunsHandler.class.getName());
 
     private final Configuration freemarkerConfig;
     private final BobClient bobClient;
 
-    public PipelineHandler(Configuration freemarkerConfig, BobClient bobClient) {
+    public RunsHandler(Configuration freemarkerConfig, BobClient bobClient) {
         this.freemarkerConfig = freemarkerConfig;
         this.bobClient = bobClient;
     }
@@ -26,11 +26,15 @@ public class PipelineHandler implements Handler {
     @Override
     public void handle(ServerRequest req, ServerResponse res) {
         try {
-            var pipelines = bobClient.listPipelines();
+            var group = req.path().pathParameters().get("group");
 
-            var template = freemarkerConfig.getTemplate("pipelines.ftl");
+            var name = req.path().pathParameters().get("name");
 
-            var model = Map.of("pipelines", pipelines);
+            var runs = bobClient.listRuns(group, name);
+
+            var template = freemarkerConfig.getTemplate("runs.ftl");
+
+            var model = Map.of("runs", runs);
 
             var writer = new StringWriter();
             template.process(model, writer);
@@ -40,9 +44,9 @@ public class PipelineHandler implements Handler {
             res.send(writer.toString());
 
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error fetching/rendering pipelines", e);
+            LOGGER.log(Level.SEVERE, "Error fetching/rendering runs", e);
             res.status(Status.INTERNAL_SERVER_ERROR_500);
-            res.send("<div class='error'>Error loading pipelines: " + e.getMessage() + "</div>");
+            res.send("<div class='error'>Error loading runs: " + e.getMessage() + "</div>");
         }
     }
 }

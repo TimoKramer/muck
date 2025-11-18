@@ -12,9 +12,8 @@ import io.helidon.webclient.http1.Http1Client;
 import io.helidon.webclient.http1.Http1ClientResponse;
 import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.Operation;
-import io.swagger.v3.oas.models.PathItem;
 import muck.model.Pipeline;
+import muck.model.Run;
 
 public class BobClient {
     private static final Logger LOGGER = Logger.getLogger(BobClient.class.getName());
@@ -114,6 +113,41 @@ public class BobClient {
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error fetching pipelines", e);
+            return List.of();
+        }
+    }
+
+    public List<Run> listRuns(String group, String name) {
+        try {
+            var op = getOperation("PipelineRuns");
+            var path = op.path()
+                    .replace("{group}", group)
+                    .replace("{name}", name);
+            var response = executeRequest(op.method(), path);
+
+            if (response.status() != Status.OK_200) {
+                LOGGER.log(Level.WARNING, "Failed to fetch pipeline runs: {0}", response.status());
+                return List.of();
+            }
+
+            Map<String, Object> body = response.as(Map.class);
+            var runsData = (List<Map<String, Object>>) body.get("message");
+
+            var runs = runsData.stream()
+                    .map(data -> new Run(
+                            (String) data.get("status"),
+                            (String) data.get("run-id"),
+                            (String) data.get("completed-at"),
+                            (String) data.get("initiated-at"),
+                            (String) data.get("scheduled-at"),
+                            (String) data.get("logger")))
+                    .toList();
+
+            LOGGER.log(Level.INFO, "Fetched {0} runs for pipeline {1}/{2}", new Object[] { runs.size(), group, name });
+            return runs;
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error fetching pipeline runs", e);
             return List.of();
         }
     }
