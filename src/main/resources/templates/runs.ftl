@@ -1,3 +1,7 @@
+<div hx-get="/runs/group/${group}/name/${name}"
+     hx-trigger="every 5s"
+     hx-target="#htmx-container"
+     hx-swap="innerHTML">
 <div class="mb-4">
     <button class="btn btn-ghost btn-sm gap-2"
             hx-get="/pipelines"
@@ -98,3 +102,4 @@
         </div>
     </div>
 </#if>
+</div>
