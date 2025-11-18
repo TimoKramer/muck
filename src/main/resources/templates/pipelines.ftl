@@ -1,3 +1,7 @@
+<div hx-get="/pipelines"
+     hx-trigger="every 5s"
+     hx-target="#htmx-container"
+     hx-swap="innerHTML">
 <#if pipelines?has_content>
     <div class="space-y-3">
         <#list pipelines as pipeline>
@@ -46,3 +50,4 @@
         </div>
     </div>
 </#if>
+</div>

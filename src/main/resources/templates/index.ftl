@@ -41,7 +41,7 @@
 
                 <div id="htmx-container"
                      hx-get="/pipelines"
-                     hx-trigger="load, every 5s"
+                     hx-trigger="load"
                      hx-indicator="#loading-indicator">
                     <div class="flex flex-col items-center justify-center py-16">
                         <span class="loading loading-dots loading-lg"></span>
