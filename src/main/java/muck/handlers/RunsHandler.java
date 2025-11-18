@@ -34,7 +34,11 @@ public class RunsHandler implements Handler {
 
             var template = freemarkerConfig.getTemplate("runs.ftl");
 
-            var model = Map.of("runs", runs);
+            var model = Map.of(
+                    "runs", runs,
+                    "group", group,
+                    "name", name
+            );
 
             var writer = new StringWriter();
             template.process(model, writer);

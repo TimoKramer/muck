@@ -39,7 +39,7 @@
                     <span class="loading loading-spinner loading-sm htmx-indicator" id="loading-indicator"></span>
                 </h2>
 
-                <div id="pipeline-list"
+                <div id="htmx-container"
                      hx-get="/pipelines"
                      hx-trigger="load, every 5s"
                      hx-indicator="#loading-indicator">

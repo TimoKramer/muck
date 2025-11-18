@@ -129,7 +129,7 @@ The application uses HTMX for dynamic updates and DaisyUI for beautiful componen
 Example HTMX usage in `index.ftl`:
 
 ```html
-<div id="pipeline-list"
+<div id="htmx-container"
      hx-get="/pipelines"
      hx-trigger="load, every 5s"
      hx-indicator="#loading-indicator">

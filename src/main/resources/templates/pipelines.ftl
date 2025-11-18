@@ -1,7 +1,10 @@
 <#if pipelines?has_content>
     <div class="space-y-3">
         <#list pipelines as pipeline>
-            <div class="card bg-base-200 hover:bg-base-300 transition-all duration-200 hover:shadow-lg">
+            <div class="card bg-base-200 hover:bg-base-300 transition-all duration-200 hover:shadow-lg cursor-pointer"
+                 hx-get="/runs/group/${pipeline.group}/name/${pipeline.name}"
+                 hx-target="#htmx-container"
+                 hx-indicator="#loading-indicator">
                 <div class="card-body p-4">
                     <div class="flex items-center justify-between">
                         <div class="flex-1">
