@@ -27,7 +27,6 @@ public class RunsHandler implements Handler {
     public void handle(ServerRequest req, ServerResponse res) {
         try {
             var group = req.path().pathParameters().get("group");
-
             var name = req.path().pathParameters().get("name");
 
             var runs = bobClient.listRuns(group, name);
@@ -37,8 +36,7 @@ public class RunsHandler implements Handler {
             var model = Map.of(
                     "runs", runs,
                     "group", group,
-                    "name", name
-            );
+                    "name", name);
 
             var writer = new StringWriter();
             template.process(model, writer);

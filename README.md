@@ -35,6 +35,8 @@ This will start:
 
 ### 2. Build the Application
 
+Use JDK Version 21 or higher
+
 ```bash
 mvn clean package
 ```
@@ -56,7 +58,7 @@ mvn exec:java -Dexec.mainClass=muck.Main
 Open your browser to:
 
 ```
-http://localhost:8080
+http://localhost:7999
 ```
 
 ## Configuration
@@ -65,7 +67,7 @@ Edit `src/main/resources/application.yaml` to configure:
 
 ```yaml
 server:
-  port: 8080        # Web server port
+  port: 7999        # Web server port
   host: "0.0.0.0"   # Bind address
 
 bob:
@@ -83,12 +85,6 @@ bob:
 - **Java 21**: Virtual threads (Project Loom)
 
 ## Development
-
-### Building
-
-```bash
-mvn clean package
-```
 
 ### Running Tests
 
@@ -163,15 +159,6 @@ Ensure Bob is running:
 ```bash
 docker-compose ps
 curl http://localhost:7777/api/pipelines
-```
-
-### Port already in use
-
-Change the port in `application.yaml`:
-
-```yaml
-server:
-  port: 8081  # Use different port
 ```
 
 ### Java version issues
