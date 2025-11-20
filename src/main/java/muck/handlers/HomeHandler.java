@@ -31,11 +31,13 @@ public class HomeHandler implements Handler {
     @Override
     public void handle(ServerRequest req, ServerResponse res) {
         try {
+            var pipelines = bobClient.listPipelines();
             var template = freemarkerConfig.getTemplate("index.ftl");
 
             var model = Map.of(
                     "title", "Muck - Bob CI/CD Monitor",
-                    "bobUrl", bobClient.getBaseUrl()
+                    "bobUrl", bobClient.getBaseUrl(),
+                    "pipelines", pipelines
             );
 
             var writer = new StringWriter();
