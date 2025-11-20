@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title}</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
 
     <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@2.0.3"></script>
@@ -12,13 +13,13 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-purple-600 to-blue-600 p-4">
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4">
     <div class="container mx-auto max-w-6xl">
         <!-- Header Card -->
         <div class="card bg-base-100 shadow-2xl mb-6">
             <div class="card-body">
                 <h1 class="card-title text-4xl">
-                    <span class="text-5xl">🔧</span>
+                    <img src="/static/favicon.svg" alt="Bob Logo" class="w-12 h-12">
                     Muck
                 </h1>
                 <p class="text-lg opacity-70">Bob CI/CD Pipeline Monitor</p>
