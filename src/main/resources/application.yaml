@@ -4,3 +4,11 @@ server:
 
 bob:
   url: "http://localhost:7777"
+
+logging:
+  level: INFO
+  format: "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s [%3$s] %5$s%6$s%n"
+  loggers:
+    muck: INFO
+    io.helidon: WARNING
+    io.netty: WARNING

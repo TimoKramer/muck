@@ -17,7 +17,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <helidon.version>4.1.4</helidon.version>
         <mainClass>muck.Main</mainClass>
     </properties>
 
@@ -25,8 +24,8 @@
         <dependencies>
             <dependency>
                 <groupId>io.helidon</groupId>
-                <artifactId>helidon-dependencies</artifactId>
-                <version>${helidon.version}</version>
+                <artifactId>helidon-bom</artifactId>
+                <version>4.1.4</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

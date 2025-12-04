@@ -138,7 +138,6 @@ public class BobClient {
                             (String) data.get("status"),
                             (String) data.get("run-id"),
                             (String) data.get("completed-at"),
-                            (String) data.get("initiated-at"),
                             (String) data.get("scheduled-at"),
                             (String) data.get("logger")))
                     .toList();
@@ -150,6 +149,21 @@ public class BobClient {
             LOGGER.log(Level.SEVERE, "Error fetching pipeline runs", e);
             return List.of();
         }
+    }
+
+    public Http1ClientResponse fetchLogs(String run) {
+        var op = getOperation("PipelineLogs");
+        var path = op.path().replace("{id}", run).concat("?follow=true");
+        // var path = op.path().replace("{id}", run);
+        var fullUrl = baseUrl + path;
+        LOGGER.log(Level.INFO, "Fetching logs: method={0}, url={1}",
+                new Object[] { op.method(), fullUrl });
+
+        var response = client.get("http://localhost:7777/pipelines/logs/runs/r-ddd11873-5452-47bc-a376-fa7bc30fcc07")
+                .request();
+        // var response = executeRequest(op.method(), path);
+        LOGGER.log(Level.INFO, "Response status: {0}", response.status());
+        return response;
     }
 
     public String getPipelineStatus(String group, String name) {
