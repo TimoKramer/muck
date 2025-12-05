@@ -2,6 +2,7 @@ package muck.handlers;
 
 import java.io.StringWriter;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,8 +27,8 @@ public class RunsHandler implements Handler {
     @Override
     public void handle(ServerRequest req, ServerResponse res) {
         try {
-            var group = req.path().pathParameters().get("group");
-            var name = req.path().pathParameters().get("name");
+            var group = req.query().get("group");
+            var name = req.query().get("name");
 
             var runs = bobClient.listRuns(group, name);
 
@@ -46,6 +47,10 @@ public class RunsHandler implements Handler {
             res.header("Content-Type", "text/html; charset=utf-8");
             res.send(writer.toString());
 
+        } catch (NoSuchElementException e) {
+            LOGGER.log(Level.INFO, "Requested run not found");
+            res.status(Status.NOT_FOUND_404);
+            res.send("Requested run not found");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error fetching/rendering runs", e);
             res.status(Status.INTERNAL_SERVER_ERROR_500);

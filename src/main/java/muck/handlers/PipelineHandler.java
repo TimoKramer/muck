@@ -30,7 +30,9 @@ public class PipelineHandler implements Handler {
 
             var template = freemarkerConfig.getTemplate("pipelines.ftl");
 
-            var model = Map.of("pipelines", pipelines);
+            var model = Map.of(
+                    "bobUrl", bobClient.getBaseUrl(),
+                    "pipelines", pipelines);
 
             var writer = new StringWriter();
             template.process(model, writer);

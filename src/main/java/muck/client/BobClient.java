@@ -1,5 +1,6 @@
 package muck.client;
 
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.logging.Logger;
 
 import io.helidon.http.Method;
 import io.helidon.http.Status;
+import io.helidon.webclient.api.ClientRequest.OutputStreamHandler;
 import io.helidon.webclient.http1.Http1Client;
 import io.helidon.webclient.http1.Http1ClientResponse;
 import io.swagger.parser.OpenAPIParser;
@@ -152,18 +154,20 @@ public class BobClient {
     }
 
     public Http1ClientResponse fetchLogs(String run) {
-        var op = getOperation("PipelineLogs");
-        var path = op.path().replace("{id}", run).concat("?follow=true");
-        // var path = op.path().replace("{id}", run);
-        var fullUrl = baseUrl + path;
-        LOGGER.log(Level.INFO, "Fetching logs: method={0}, url={1}",
-                new Object[] { op.method(), fullUrl });
+        try {
+            var op = getOperation("PipelineLogs");
+            var path = op.path().replace("{id}", run).concat("?follow=true");
+            var fullUrl = baseUrl + path;
+            LOGGER.log(Level.INFO, "Fetching logs from Bob: method={0}, url={1}",
+                    new Object[] { op.method(), fullUrl });
 
-        var response = client.get("http://localhost:7777/pipelines/logs/runs/r-ddd11873-5452-47bc-a376-fa7bc30fcc07")
-                .request();
-        // var response = executeRequest(op.method(), path);
-        LOGGER.log(Level.INFO, "Response status: {0}", response.status());
-        return response;
+            return client.method(op.method()).path(path).request();
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Exception in fetchLogs for run: " + run, e);
+            e.printStackTrace(System.err);
+            throw e;
+        }
     }
 
     public String getPipelineStatus(String group, String name) {

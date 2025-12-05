@@ -10,6 +10,7 @@ import io.helidon.webserver.staticcontent.StaticContentService;
 import muck.client.BobClient;
 import muck.handlers.HomeHandler;
 import muck.handlers.LogsStreamHandler;
+import muck.handlers.PipelineHandler;
 import muck.handlers.RunsHandler;
 
 import java.io.IOException;
@@ -49,9 +50,11 @@ public class Main {
 
                 .get("/", new HomeHandler(freemarkerConfig, bobClient))
 
-                .get("/runs/group/{group}/name/{name}", new RunsHandler(freemarkerConfig, bobClient))
+                .get("/pipelines", new PipelineHandler(freemarkerConfig, bobClient))
 
-                .get("/logs/stream/run/{run}", new LogsStreamHandler(bobClient))
+                .get("/runs", new RunsHandler(freemarkerConfig, bobClient))
+
+                .get("/logs", new LogsStreamHandler(bobClient))
 
                 .get("/health", (req, res) -> res.send("OK"));
     }

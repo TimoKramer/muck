@@ -1,14 +1,14 @@
 <#import "layout.ftl" as layout>
 
 <@layout.page title="Pipelines - Muck" bobUrl=bobUrl>
-    <div class="card bg-base-100 shadow-2xl">
+    <div id="htmx-content" class="card bg-base-100 shadow-2xl">
         <div class="card-body">
             <h2 class="card-title text-3xl mb-4">Pipelines</h2>
 
             <#if pipelines?has_content>
                 <div class="space-y-3">
                     <#list pipelines as pipeline>
-                        <a href="/runs/group/${pipeline.group}/name/${pipeline.name}" class="block">
+                        <a href="/runs?group=${pipeline.group}&name=${pipeline.name}" class="block">
                             <div class="card bg-base-200 hover:bg-base-300 transition-all duration-200 hover:shadow-lg cursor-pointer">
                                 <div class="card-body p-4">
                                     <div class="flex items-center justify-between">
