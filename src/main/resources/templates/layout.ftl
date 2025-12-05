@@ -1,3 +1,4 @@
+<#macro page title bobUrl>
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -32,19 +33,9 @@
             </div>
         </div>
 
-        <!-- Pipelines Card -->
-        <div class="card bg-base-100 shadow-2xl">
-            <div class="card-body">
-                <h2 class="card-title text-3xl mb-4">
-                    Pipelines
-                    <span class="loading loading-spinner loading-sm htmx-indicator" id="loading-indicator"></span>
-                </h2>
-
-                <div id="htmx-container">
-                    <#include "pipelines.ftl">
-                </div>
-            </div>
-        </div>
+        <!-- Page Content -->
+        <#nested>
     </div>
 </body>
 </html>
+</#macro>

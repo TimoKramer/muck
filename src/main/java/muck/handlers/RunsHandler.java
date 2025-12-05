@@ -34,6 +34,7 @@ public class RunsHandler implements Handler {
             var template = freemarkerConfig.getTemplate("runs.ftl");
 
             var model = Map.of(
+                    "bobUrl", bobClient.getBaseUrl(),
                     "runs", runs,
                     "group", group,
                     "name", name);

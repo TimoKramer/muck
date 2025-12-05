@@ -9,9 +9,7 @@ import io.helidon.webserver.http.HttpRouting;
 import io.helidon.webserver.staticcontent.StaticContentService;
 import muck.client.BobClient;
 import muck.handlers.HomeHandler;
-import muck.handlers.LogsHandler;
 import muck.handlers.LogsStreamHandler;
-import muck.handlers.PipelineHandler;
 import muck.handlers.RunsHandler;
 
 import java.io.IOException;
@@ -50,8 +48,6 @@ public class Main {
                         .build())
 
                 .get("/", new HomeHandler(freemarkerConfig, bobClient))
-
-                .get("/pipelines", new PipelineHandler(freemarkerConfig, bobClient))
 
                 .get("/runs/group/{group}/name/{name}", new RunsHandler(freemarkerConfig, bobClient))
 

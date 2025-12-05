@@ -32,10 +32,9 @@ public class HomeHandler implements Handler {
     public void handle(ServerRequest req, ServerResponse res) {
         try {
             var pipelines = bobClient.listPipelines();
-            var template = freemarkerConfig.getTemplate("index.ftl");
+            var template = freemarkerConfig.getTemplate("pipelines.ftl");
 
             var model = Map.of(
-                    "title", "Muck - Bob CI/CD Monitor",
                     "bobUrl", bobClient.getBaseUrl(),
                     "pipelines", pipelines
             );
