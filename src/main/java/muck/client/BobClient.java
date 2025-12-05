@@ -1,6 +1,7 @@
 package muck.client;
 
 import java.io.OutputStream;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -156,12 +157,16 @@ public class BobClient {
     public Http1ClientResponse fetchLogs(String run) {
         try {
             var op = getOperation("PipelineLogs");
-            var path = op.path().replace("{id}", run).concat("?follow=true");
-            var fullUrl = baseUrl + path;
+            var path = op.path().replace("{id}", run);
             LOGGER.log(Level.INFO, "Fetching logs from Bob: method={0}, url={1}",
-                    new Object[] { op.method(), fullUrl });
+                    new Object[] { op.method(), baseUrl + path});
 
-            return client.method(op.method()).path(path).request();
+            return client
+                .method(op.method())
+                .readTimeout(Duration.ZERO)
+                .path(path)
+                .queryParam("follow", "true")
+                .request();
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Exception in fetchLogs for run: " + run, e);
