@@ -15,6 +15,7 @@ import muck.handlers.PipelineHandler;
 import muck.handlers.RunsHandler;
 
 import java.io.IOException;
+import java.util.Locale;
 
 public class Main {
 
@@ -26,8 +27,10 @@ public class Main {
 
         var config = Config.create();
         var serverConfig = config.get("server");
+        var locale = Locale.forLanguageTag(config.get("locale").asString().orElse("en_us"));
 
         freemarkerConfig = createFreemarkerConfig();
+        freemarkerConfig.setLocale(locale);
 
         var bobUrl = config.get("bob.url")
                 .asString()

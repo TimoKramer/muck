@@ -2,6 +2,8 @@ server:
   port: 7999
   host: "0.0.0.0"
 
+locale:
+
 bob:
   url: "http://localhost:7777"
 
