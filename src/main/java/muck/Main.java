@@ -9,6 +9,7 @@ import io.helidon.webserver.http.HttpRouting;
 import io.helidon.webserver.staticcontent.StaticContentService;
 import muck.client.BobClient;
 import muck.handlers.HomeHandler;
+import muck.handlers.LogsHandler;
 import muck.handlers.LogsStreamHandler;
 import muck.handlers.PipelineHandler;
 import muck.handlers.RunsHandler;
@@ -54,7 +55,9 @@ public class Main {
 
                 .get("/runs", new RunsHandler(freemarkerConfig, bobClient))
 
-                .get("/logs", new LogsStreamHandler(bobClient))
+                .get("/logs", new LogsHandler(freemarkerConfig, bobClient))
+
+                .get("/logs/stream", new LogsStreamHandler(bobClient))
 
                 .get("/health", (req, res) -> res.send("OK"));
     }
