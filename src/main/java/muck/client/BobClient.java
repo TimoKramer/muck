@@ -54,6 +54,7 @@ public class BobClient {
             return result.getOpenAPI();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Failed to load OpenAPI spec", e);
+            System.exit(1);
             return null;
         }
     }
@@ -159,14 +160,14 @@ public class BobClient {
             var op = getOperation("PipelineLogs");
             var path = op.path().replace("{id}", run);
             LOGGER.log(Level.INFO, "Fetching logs from Bob: method={0}, url={1}",
-                    new Object[] { op.method(), baseUrl + path});
+                    new Object[] { op.method(), baseUrl + path });
 
             return client
-                .method(op.method())
-                .readTimeout(Duration.ZERO)
-                .path(path)
-                .queryParam("follow", "true")
-                .request();
+                    .method(op.method())
+                    .readTimeout(Duration.ZERO)
+                    .path(path)
+                    .queryParam("follow", "true")
+                    .request();
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Exception in fetchLogs for run: " + run, e);

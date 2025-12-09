@@ -4,7 +4,7 @@
     <div class="card bg-base-100 shadow-2xl">
         <div class="card-body">
             <div class="mb-4">
-                <a href="/" class="btn btn-ghost btn-sm gap-2">
+                <a href="/runs?group=${group}&name=${name}" class="btn btn-ghost btn-sm gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>

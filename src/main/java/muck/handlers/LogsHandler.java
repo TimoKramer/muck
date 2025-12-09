@@ -28,12 +28,16 @@ public class LogsHandler implements Handler {
     public void handle(ServerRequest req, ServerResponse res) {
         try {
             var run = req.query().get("run");
+            var group = req.query().get("group");
+            var name = req.query().get("name");
 
             var template = freemarkerConfig.getTemplate("logs.ftl");
 
             var model = Map.of(
                     "bobUrl", bobClient.getBaseUrl(),
-                    "run", run);
+                    "run", run,
+                    "group", group,
+                    "name", name);
 
             var writer = new StringWriter();
             template.process(model, writer);
