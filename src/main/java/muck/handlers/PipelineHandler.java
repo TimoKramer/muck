@@ -10,7 +10,10 @@ import io.helidon.http.Status;
 import io.helidon.webserver.http.Handler;
 import io.helidon.webserver.http.ServerRequest;
 import io.helidon.webserver.http.ServerResponse;
+import java.util.Comparator;
+
 import muck.client.BobClient;
+import muck.model.Run;
 
 public class PipelineHandler implements Handler {
     private static final Logger LOGGER = Logger.getLogger(PipelineHandler.class.getName());
@@ -28,11 +31,21 @@ public class PipelineHandler implements Handler {
         try {
             var pipelines = bobClient.listPipelines();
 
+            var enrichedPipelines = pipelines.parallelStream()
+                    .map(p -> {
+                        var latestStatus = bobClient.listRuns(p.group(), p.name()).stream()
+                                .max(Comparator.comparing(Run::scheduledAt))
+                                .map(Run::status)
+                                .orElse("unknown");
+                        return p.withStatus(latestStatus);
+                    })
+                    .toList();
+
             var template = freemarkerConfig.getTemplate("pipelines.ftl");
 
             var model = Map.of(
                     "bobUrl", bobClient.getBaseUrl(),
-                    "pipelines", pipelines);
+                    "pipelines", enrichedPipelines);
 
             var writer = new StringWriter();
             template.process(model, writer);
