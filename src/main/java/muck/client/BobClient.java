@@ -199,12 +199,13 @@ public class BobClient {
         }
     }
 
-    public boolean startPipeline(String group, String name) {
+    public boolean startPipeline(String group, String name, String logger) {
         try {
             var op = getOperation("PipelineStart");
             var path = op.path()
                     .replace("{group}", group)
-                    .replace("{name}", name);
+                    .replace("{name}", name)
+                    .replace("{logger}", logger);
             var response = executeRequest(op.method(), path);
 
             return response.status() == Status.ACCEPTED_202;

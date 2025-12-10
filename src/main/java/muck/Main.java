@@ -22,6 +22,7 @@ public class Main {
 
     private static Configuration freemarkerConfig;
     private static BobClient bobClient;
+    private static String bobLogger;
 
     public static void main(String[] args) throws IOException {
         LogConfig.configureRuntime();
@@ -35,8 +36,12 @@ public class Main {
 
         var bobUrl = config.get("bob.url")
                 .asString()
-                .orElse("http://localhost:7777");
+                .orElseThrow();
         bobClient = new BobClient(bobUrl);
+
+        bobLogger = config.get("bob.logger")
+                .asString()
+                .orElseThrow();
 
         var server = WebServer.builder()
                 .config(serverConfig)
@@ -63,7 +68,7 @@ public class Main {
 
                 .get("/logs/stream", new LogsStreamHandler(bobClient))
 
-                .post("/start", new StartPipelineHandler(bobClient))
+                .post("/start", new StartPipelineHandler(bobLogger, bobClient))
 
                 .get("/health", (req, res) -> res.send("OK"));
     }

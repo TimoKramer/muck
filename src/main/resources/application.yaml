@@ -6,6 +6,7 @@ locale:
 
 bob:
   url: "http://localhost:7777"
+  logger: "logger-local"
 
 logging:
   level: INFO

@@ -14,24 +14,28 @@ public class StartPipelineHandler implements Handler {
 
     private final BobClient bobClient;
 
-    public StartPipelineHandler(BobClient bobClient) {
+    private final String bobLogger;
+
+    public StartPipelineHandler(String bobLogger, BobClient bobClient) {
         this.bobClient = bobClient;
+        this.bobLogger = bobLogger;
     }
 
     @Override
     public void handle(ServerRequest req, ServerResponse res) {
         var group = req.query().get("group");
         var name = req.query().get("name");
+        LOGGER.log(Level.INFO, "Starting pipeline {0}/{1}/{2}", new Object[] { group, name, bobLogger });
 
-        if (group == null || name == null) {
+        if (group == null || name == null || bobLogger == null) {
             res.status(Status.BAD_REQUEST_400);
-            res.send("Missing group or name parameter");
+            res.send("Missing parameter");
             return;
         }
 
-        LOGGER.log(Level.INFO, "Starting pipeline {0}/{1}", new Object[]{group, name});
+        LOGGER.log(Level.INFO, "Starting pipeline {0}/{1}/{2}", new Object[] { group, name, bobLogger });
 
-        var success = bobClient.startPipeline(group, name);
+        var success = bobClient.startPipeline(group, name, bobLogger);
 
         if (success) {
             res.status(Status.OK_200);
