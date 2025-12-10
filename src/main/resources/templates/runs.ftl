@@ -1,7 +1,7 @@
 <#import "layout.ftl" as layout>
 
 <@layout.page title="Runs - Muck" bobUrl=bobUrl>
-    <div class="card bg-base-100 shadow-2xl">
+    <div id="htmx-content" class="card bg-base-100 shadow-2xl">
         <div class="card-body">
             <div class="mb-4">
                 <a href="/" class="btn btn-ghost btn-sm gap-2">
