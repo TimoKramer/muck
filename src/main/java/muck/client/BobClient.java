@@ -140,6 +140,8 @@ public class BobClient {
             var runs = runsData.stream()
                     .map(data -> new Run(
                             (String) data.get("status"),
+                            (String) data.get("name"),
+                            (String) data.get("group"),
                             (String) data.get("run-id"),
                             (String) data.get("completed-at"),
                             (String) data.get("scheduled-at"),

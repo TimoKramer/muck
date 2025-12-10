@@ -25,7 +25,7 @@
                                                 Group: ${pipeline.group}
                                             </div>
                                         </div>
-                                        <div>
+                                        <div class="flex items-center gap-2">
                                             <#if pipeline.status == "running">
                                                 <span class="badge badge-success badge-lg">
                                                     <span class="loading loading-spinner loading-xs mr-1"></span>
@@ -38,6 +38,15 @@
                                             <#else>
                                                 <span class="badge badge-ghost badge-lg">${pipeline.status}</span>
                                             </#if>
+                                            <button class="btn btn-ghost btn-sm btn-circle"
+                                                    hx-post="/start?group=${pipeline.group}&name=${pipeline.name}"
+                                                    hx-swap="none"
+                                                    onclick="event.stopPropagation()">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="10"/>
+                                                    <path d="M10 8l6 4-6 4V8z" fill="currentColor" stroke="none"/>
+                                                </svg>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

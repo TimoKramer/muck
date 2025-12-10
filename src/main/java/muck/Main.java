@@ -13,6 +13,7 @@ import muck.handlers.LogsHandler;
 import muck.handlers.LogsStreamHandler;
 import muck.handlers.PipelineHandler;
 import muck.handlers.RunsHandler;
+import muck.handlers.StartPipelineHandler;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -61,6 +62,8 @@ public class Main {
                 .get("/logs", new LogsHandler(freemarkerConfig, bobClient))
 
                 .get("/logs/stream", new LogsStreamHandler(bobClient))
+
+                .post("/start", new StartPipelineHandler(bobClient))
 
                 .get("/health", (req, res) -> res.send("OK"));
     }

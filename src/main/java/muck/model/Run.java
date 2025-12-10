@@ -4,6 +4,8 @@ package muck.model;
  * Represents a pipeline run from Bob CI/CD
  *
  * @param status      Run status (e.g., "running", "passed", "failed")
+ * @param name        Name of the pipeline the run was triggered from
+ * @param group       Group of the pipeline the run was triggered from
  * @param runId       Unique identifier for the run
  * @param completedAt Timestamp when the run completed (ISO 8601 format)
  * @param scheduledAt Timestamp when the run was scheduled (ISO 8601 format)
@@ -11,6 +13,8 @@ package muck.model;
  */
 public record Run(
         String status,
+        String name,
+        String group,
         String runId,
         String completedAt,
         String scheduledAt,
