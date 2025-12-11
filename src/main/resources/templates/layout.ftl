@@ -7,8 +7,8 @@
     <title>${title}</title>
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
 
-    <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@2.0.3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx-ext-sse@2.2.4" integrity="sha384-A986SAtodyH8eg8x8irJnYUk7i9inVQqYigD6qZ9evobksGNIXfeFvDwLSHcp31N" crossorigin="anonymous"></script>
 
     <!-- Tailwind CSS + DaisyUI -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
@@ -32,6 +32,7 @@
                 </div>
             </div>
         </div>
+        <span class="loading loading-spinner loading-sm htmx-indicator" id="loading-indicator"></span>
 
         <!-- Page Content -->
         <#nested>

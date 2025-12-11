@@ -96,6 +96,13 @@ services:
     volumes:
       - logs:/logs
 
+  etcd-workbench:
+    image: docker.io/tzfun/etcd-workbench
+    networks:
+      - bob-net
+    ports:
+      - 8008:8002
+
 networks:
   bob-net:
 
