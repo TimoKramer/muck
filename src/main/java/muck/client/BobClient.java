@@ -1,6 +1,5 @@
 package muck.client;
 
-import java.io.OutputStream;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.logging.Logger;
 
 import io.helidon.http.Method;
 import io.helidon.http.Status;
-import io.helidon.webclient.api.ClientRequest.OutputStreamHandler;
 import io.helidon.webclient.http1.Http1Client;
 import io.helidon.webclient.http1.Http1ClientResponse;
 import io.swagger.parser.OpenAPIParser;

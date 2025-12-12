@@ -1,5 +1,10 @@
 package muck.handlers;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,8 +42,21 @@ public class LogsStreamHandler implements Handler {
                 res.header("Transfer-Encoding", "chunked");
                 res.header("X-Content-Type-Options", "nosniff");
 
-                logResponse.entity().inputStream().transferTo(res.outputStream());
+                // Does abort the stream at some point
+                // logResponse.entity().inputStream().transferTo(res.outputStream());
 
+                try (var reader = new BufferedReader(
+                        new InputStreamReader(logResponse.entity().inputStream(), StandardCharsets.UTF_8));
+                        var writer = new BufferedWriter(
+                                new OutputStreamWriter(res.outputStream(), StandardCharsets.UTF_8))) {
+
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        writer.write(line);
+                        writer.newLine();
+                        writer.flush();
+                    }
+                }
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error streaming logs", e);
