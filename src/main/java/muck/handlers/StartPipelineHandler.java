@@ -3,6 +3,7 @@ package muck.handlers;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import io.helidon.common.uri.UriEncoding;
 import io.helidon.http.Status;
 import io.helidon.webserver.http.Handler;
 import io.helidon.webserver.http.ServerRequest;
@@ -23,9 +24,8 @@ public class StartPipelineHandler implements Handler {
 
     @Override
     public void handle(ServerRequest req, ServerResponse res) {
-        var group = req.query().get("group");
-        var name = req.query().get("name");
-        LOGGER.log(Level.INFO, "Starting pipeline {0}/{1}/{2}", new Object[] { group, name, bobLogger });
+        var group = UriEncoding.encodeUri(req.query().get("group"));
+        var name = UriEncoding.encodeUri(req.query().get("name"));
 
         if (group == null || name == null || bobLogger == null) {
             res.status(Status.BAD_REQUEST_400);
@@ -33,7 +33,8 @@ public class StartPipelineHandler implements Handler {
             return;
         }
 
-        LOGGER.log(Level.INFO, "Starting pipeline {0}/{1}/{2}", new Object[] { group, name, bobLogger });
+        LOGGER.log(Level.INFO, "Starting pipeline group: {0} name: {1} logger: {2}",
+                new Object[] { group, name, bobLogger });
 
         var success = bobClient.startPipeline(group, name, bobLogger);
 

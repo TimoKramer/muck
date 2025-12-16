@@ -1,5 +1,6 @@
 package muck;
 
+import freemarker.core.HTMLOutputFormat;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
 import io.helidon.config.Config;
@@ -36,6 +37,7 @@ public class Main {
 
             freemarkerConfig = createFreemarkerConfig();
             freemarkerConfig.setLocale(locale);
+            freemarkerConfig.setOutputFormat(HTMLOutputFormat.INSTANCE);
 
             var bobUrl = config.get("bob.url")
                     .asString()

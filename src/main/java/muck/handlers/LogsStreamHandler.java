@@ -26,7 +26,7 @@ public class LogsStreamHandler implements Handler {
     @Override
     public void handle(ServerRequest req, ServerResponse res) {
         try {
-            var run = req.query().get("run");
+            var run = ValidationHelper.validateRun(req.query().get("run"));
             try (var logResponse = bobClient.fetchLogs(run)) {
 
                 if (logResponse.status() != Status.OK_200) {
