@@ -17,40 +17,47 @@ import muck.handlers.StartPipelineHandler;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 public class Main {
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
     private static Configuration freemarkerConfig;
     private static BobClient bobClient;
     private static String bobLogger;
 
     public static void main(String[] args) throws IOException {
-        LogConfig.configureRuntime();
+        try {
+            LogConfig.configureRuntime();
 
-        var config = Config.create();
-        var serverConfig = config.get("server");
-        var locale = Locale.forLanguageTag(config.get("locale").asString().orElse("en_us"));
+            var config = Config.create();
+            var serverConfig = config.get("server");
+            var locale = Locale.forLanguageTag(config.get("locale").asString().orElse("en_us"));
 
-        freemarkerConfig = createFreemarkerConfig();
-        freemarkerConfig.setLocale(locale);
+            freemarkerConfig = createFreemarkerConfig();
+            freemarkerConfig.setLocale(locale);
 
-        var bobUrl = config.get("bob.url")
-                .asString()
-                .orElseThrow();
-        bobClient = new BobClient(bobUrl);
+            var bobUrl = config.get("bob.url")
+                    .asString()
+                    .orElseThrow();
+            bobClient = new BobClient(bobUrl);
 
-        bobLogger = config.get("bob.logger")
-                .asString()
-                .orElseThrow();
+            bobLogger = config.get("bob.logger")
+                    .asString()
+                    .orElseThrow();
 
-        var server = WebServer.builder()
-                .config(serverConfig)
-                .routing(Main::routing)
-                .build()
-                .start();
+            var server = WebServer.builder()
+                    .config(serverConfig)
+                    .routing(Main::routing)
+                    .build()
+                    .start();
 
-        System.out.println("Muck - Bob CI/CD Monitor");
-        System.out.println("WEB server is up! http://localhost:" + server.port());
+            System.out.println("Muck - Bob CI/CD Monitor");
+            System.out.println("WEB server is up! http://localhost:" + server.port());
+
+        } catch (Exception e) {
+            LOGGER.severe("Unable to start Muck: " + e.getMessage());
+        }
     }
 
     static void routing(HttpRouting.Builder routing) {

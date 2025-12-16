@@ -52,8 +52,7 @@ public class BobClient {
             return result.getOpenAPI();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Failed to load OpenAPI spec", e);
-            System.exit(1);
-            return null;
+            throw e;
         }
     }
 
