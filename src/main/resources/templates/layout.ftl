@@ -1,4 +1,4 @@
-<#macro page title bobUrl>
+<#macro page title bobUrl connected=true>
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -21,14 +21,14 @@
             <div class="card-body">
                 <h1 class="card-title text-4xl">
                     <img src="/static/favicon.svg" alt="Bob Logo" class="w-12 h-12">
-                    Muck
+                    Bob the Builder
                 </h1>
-                <p class="text-lg opacity-70">Bob CI/CD Pipeline Monitor</p>
-                <div class="badge badge-outline badge-lg mt-2">
+                <p class="text-lg opacity-70">Bob CD Pipeline Monitor</p>
+                <div class="badge badge-outline badge-lg mt-2" title="${bobUrl}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
-                    Connected to: ${bobUrl}
+                    <#if connected><span class="text-green-600">Connected</span><#else><span class="text-red-600">Not connected</span></#if>
                 </div>
             </div>
         </div>
