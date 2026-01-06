@@ -9,6 +9,8 @@ import io.helidon.webserver.WebServer;
 import io.helidon.webserver.http.HttpRouting;
 import io.helidon.webserver.staticcontent.StaticContentService;
 import muck.client.BobClient;
+import muck.cache.CacheRefresher;
+import muck.cache.PipelineCache;
 import muck.handlers.HomeHandler;
 import muck.handlers.LogsHandler;
 import muck.handlers.LogsStreamHandler;
@@ -17,6 +19,7 @@ import muck.handlers.RunsHandler;
 import muck.handlers.StartPipelineHandler;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Locale;
 import java.util.logging.Logger;
 
@@ -26,6 +29,8 @@ public class Main {
     private static Configuration freemarkerConfig;
     private static BobClient bobClient;
     private static String bobLogger;
+    private static PipelineCache pipelineCache;
+    private static CacheRefresher cacheRefresher;
 
     public static void main(String[] args) throws IOException {
         try {
@@ -48,11 +53,33 @@ public class Main {
                     .asString()
                     .orElseThrow();
 
+            pipelineCache = new PipelineCache();
+
+            var refreshIntervalSeconds = config.get("cache.refresh-interval-seconds")
+                    .asInt()
+                    .orElse(5);
+            var blockOnStartup = config.get("cache.block-on-startup")
+                    .asBoolean()
+                    .orElse(true);
+
+            cacheRefresher = new CacheRefresher(
+                    bobClient,
+                    pipelineCache,
+                    Duration.ofSeconds(refreshIntervalSeconds)
+            );
+            cacheRefresher.start(blockOnStartup);
+
             var server = WebServer.builder()
                     .config(serverConfig)
                     .routing(Main::routing)
                     .build()
                     .start();
+
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                LOGGER.info("Shutdown initiated...");
+                cacheRefresher.close();
+                server.stop();
+            }));
 
             System.out.println("Muck - Bob CI/CD Monitor");
             System.out.println("WEB server is up! http://localhost:" + server.port());
@@ -67,17 +94,17 @@ public class Main {
                 .register("/static", StaticContentService.builder("static")
                         .build())
 
-                .get("/", new HomeHandler(freemarkerConfig, bobClient))
+                .get("/", new HomeHandler(freemarkerConfig, bobClient, pipelineCache))
 
-                .get("/pipelines", new PipelineHandler(freemarkerConfig, bobClient))
+                .get("/pipelines", new PipelineHandler(freemarkerConfig, bobClient, pipelineCache))
 
-                .get("/runs", new RunsHandler(freemarkerConfig, bobClient))
+                .get("/runs", new RunsHandler(freemarkerConfig, bobClient, pipelineCache))
 
                 .get("/logs", new LogsHandler(freemarkerConfig, bobClient))
 
                 .get("/logs/stream", new LogsStreamHandler(bobClient))
 
-                .post("/start", new StartPipelineHandler(bobLogger, bobClient))
+                .post("/start", new StartPipelineHandler(bobLogger, bobClient, cacheRefresher))
 
                 .get("/health", (req, res) -> res.send("OK"));
     }

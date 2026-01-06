@@ -6,6 +6,7 @@ import io.helidon.http.Status;
 import io.helidon.webserver.http.Handler;
 import io.helidon.webserver.http.ServerRequest;
 import io.helidon.webserver.http.ServerResponse;
+import muck.cache.PipelineCache;
 import muck.client.BobClient;
 
 import java.io.StringWriter;
@@ -22,16 +23,18 @@ public class HomeHandler implements Handler {
 
     private final Configuration freemarkerConfig;
     private final BobClient bobClient;
+    private final PipelineCache cache;
 
-    public HomeHandler(Configuration freemarkerConfig, BobClient bobClient) {
+    public HomeHandler(Configuration freemarkerConfig, BobClient bobClient, PipelineCache cache) {
         this.freemarkerConfig = freemarkerConfig;
         this.bobClient = bobClient;
+        this.cache = cache;
     }
 
     @Override
     public void handle(ServerRequest req, ServerResponse res) {
         try {
-            var pipelines = bobClient.listPipelines();
+            var pipelines = cache.getPipelines();
             var template = freemarkerConfig.getTemplate("pipelines.ftl");
 
             var model = Map.of(

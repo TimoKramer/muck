@@ -10,42 +10,32 @@ import io.helidon.http.Status;
 import io.helidon.webserver.http.Handler;
 import io.helidon.webserver.http.ServerRequest;
 import io.helidon.webserver.http.ServerResponse;
-import java.util.Comparator;
-
+import muck.cache.PipelineCache;
 import muck.client.BobClient;
-import muck.model.Run;
 
 public class PipelineHandler implements Handler {
     private static final Logger LOGGER = Logger.getLogger(PipelineHandler.class.getName());
 
     private final Configuration freemarkerConfig;
     private final BobClient bobClient;
+    private final PipelineCache cache;
 
-    public PipelineHandler(Configuration freemarkerConfig, BobClient bobClient) {
+    public PipelineHandler(Configuration freemarkerConfig, BobClient bobClient, PipelineCache cache) {
         this.freemarkerConfig = freemarkerConfig;
         this.bobClient = bobClient;
+        this.cache = cache;
     }
 
     @Override
     public void handle(ServerRequest req, ServerResponse res) {
         try {
-            var pipelines = bobClient.listPipelines();
-
-            var enrichedPipelines = pipelines.parallelStream()
-                    .map(p -> {
-                        var latestStatus = bobClient.listRuns(p.group(), p.name()).stream()
-                                .max(Comparator.comparing(Run::scheduledAt))
-                                .map(Run::status)
-                                .orElse("unknown");
-                        return p.withStatus(latestStatus);
-                    })
-                    .toList();
+            var pipelines = cache.getPipelines();
 
             var template = freemarkerConfig.getTemplate("pipelines.ftl");
 
             var model = Map.of(
                     "bobUrl", bobClient.getBaseUrl(),
-                    "pipelines", enrichedPipelines);
+                    "pipelines", pipelines);
 
             var writer = new StringWriter();
             template.process(model, writer);

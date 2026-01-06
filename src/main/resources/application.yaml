@@ -8,6 +8,10 @@ bob:
   url: "http://localhost:7777"
   logger: "logger-local"
 
+cache:
+  refresh-interval-seconds: 5
+  block-on-startup: true
+
 logging:
   level: INFO
   format: "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s [%3$s] %5$s%6$s%n"
