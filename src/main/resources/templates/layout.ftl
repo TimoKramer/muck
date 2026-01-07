@@ -14,19 +14,15 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4">
-    <div class="container mx-auto max-w-6xl">
-        <!-- Header Card -->
-        <div class="card bg-base-100 shadow-2xl mb-6">
-            <div class="card-body">
-                <h1 class="card-title text-4xl">
-                    <img src="/static/favicon.svg" alt="Bob Logo" class="w-12 h-12">
-                    Bob the Builder
-                </h1>
-                <p class="text-lg opacity-70">Bob CD Pipeline Monitor</p>
-            </div>
+<body class="min-h-screen bg-base-200">
+    <div class="container mx-auto max-w-5xl px-4 py-6">
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-6">
+            <img src="/static/favicon.svg" alt="Bob" class="w-8 h-8">
+            <span class="font-semibold text-lg">Muck</span>
+            <span class="text-base-content/50 text-sm">Bob CD Monitor</span>
+            <span class="loading loading-spinner loading-sm htmx-indicator ml-auto" id="loading-indicator"></span>
         </div>
-        <span class="loading loading-spinner loading-sm htmx-indicator" id="loading-indicator"></span>
 
         <!-- Page Content -->
         <#nested>

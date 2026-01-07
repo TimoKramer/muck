@@ -7,23 +7,18 @@
          hx-target="this"
          hx-select="#htmx-content"
          hx-indicator="#loading-indicator">
-        <div id="htmx-content" class="card bg-base-100 shadow-2xl">
+        <div id="htmx-content" class="card bg-base-100 shadow-sm">
             <div class="card-body">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="card-title text-3xl">Pipelines</h2>
+                    <h2 class="text-xl font-semibold">Pipelines</h2>
                     <#if connected>
-                        <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm" title=${bobUrl}>
-                            <span class="relative flex h-2 w-2">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                            </span>
+                        <div class="badge badge-outline badge-sm gap-1 text-success border-success" title="${bobUrl}">
+                            <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
                             Connected
                         </div>
                     <#else>
-                        <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 text-red-700 text-sm">
-                            <span class="relative flex h-2 w-2">
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                            </span>
+                        <div class="badge badge-outline badge-sm gap-1 text-error border-error">
+                            <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
                             Disconnected
                         </div>
                     </#if>
@@ -39,41 +34,34 @@
                                hx-swap="outerHTML"
                                hx-indicator="#loading-indicator"
                                hx-push-url="true">
-                                <div class="card bg-base-200 hover:bg-base-300 transition-all duration-200 hover:shadow-lg cursor-pointer">
-                                    <div class="card-body p-4">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex-1">
-                                                <h3 class="font-bold text-lg">${pipeline.name}</h3>
-                                                <div class="text-sm opacity-60 mt-1">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                                                    </svg>
-                                                    Group: ${pipeline.group}
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center gap-2">
-                                                <#if pipeline.status == "running">
-                                                    <span class="badge badge-success badge-lg">
-                                                        <span class="loading loading-spinner loading-xs mr-1"></span>
-                                                        ${pipeline.status}
-                                                    </span>
-                                                <#elseif pipeline.status == "passed">
-                                                    <span class="badge badge-info badge-lg">${pipeline.status}</span>
-                                                <#elseif pipeline.status == "failed">
-                                                    <span class="badge badge-error badge-lg">${pipeline.status}</span>
-                                                <#else>
-                                                    <span class="badge badge-ghost badge-lg">${pipeline.status}</span>
-                                                </#if>
-                                                <button class="btn btn-ghost btn-sm btn-circle"
-                                                        hx-post="/start?group=${pipeline.group}&name=${pipeline.name}"
-                                                        hx-swap="none"
-                                                        onclick="event.stopPropagation()">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                        <circle cx="12" cy="12" r="10"/>
-                                                        <path d="M10 8l6 4-6 4V8z" fill="currentColor" stroke="none"/>
-                                                    </svg>
-                                                </button>
-                                            </div>
+                                <div class="rounded-lg border border-base-300 bg-base-100 hover:border-base-content/20 transition-colors duration-150 cursor-pointer p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <h3 class="font-medium">${pipeline.name}</h3>
+                                            <div class="text-sm text-base-content/60 mt-1">${pipeline.group}</div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <#if pipeline.status == "running">
+                                                <span class="badge badge-outline badge-sm gap-1 text-info border-info">
+                                                    <span class="loading loading-spinner loading-xs"></span>
+                                                    ${pipeline.status}
+                                                </span>
+                                            <#elseif pipeline.status == "passed">
+                                                <span class="badge badge-outline badge-sm text-success border-success">${pipeline.status}</span>
+                                            <#elseif pipeline.status == "failed">
+                                                <span class="badge badge-outline badge-sm text-error border-error">${pipeline.status}</span>
+                                            <#else>
+                                                <span class="badge badge-outline badge-sm">${pipeline.status}</span>
+                                            </#if>
+                                            <button class="btn btn-ghost btn-xs btn-circle"
+                                                    hx-post="/start?group=${pipeline.group}&name=${pipeline.name}"
+                                                    hx-swap="none"
+                                                    onclick="event.stopPropagation()">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="10"/>
+                                                    <path d="M10 8l6 4-6 4V8z" fill="currentColor" stroke="none"/>
+                                                </svg>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
