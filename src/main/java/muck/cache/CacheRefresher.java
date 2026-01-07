@@ -59,6 +59,8 @@ public class CacheRefresher implements AutoCloseable {
     private void refresh() {
         LOGGER.fine("Starting cache refresh cycle");
         try {
+            cache.setHealthy(bobClient.checkHealth());
+
             var pipelines = bobClient.listPipelines();
 
             if (pipelines.isEmpty()) {

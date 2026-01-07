@@ -1,6 +1,6 @@
 <#import "layout.ftl" as layout>
 
-<@layout.page title="Logs - Muck" bobUrl=bobUrl>
+<@layout.page title="Logs - Muck" bobUrl=bobUrl connected=connected>
     <div class="card bg-base-100 shadow-2xl">
         <div class="card-body">
             <div class="mb-4">
@@ -12,7 +12,8 @@
                 </a>
 
                 <div class="mt-4 mb-2">
-                    <h2 class="text-xl font-bold font-mono">${run}</h2>
+                    <h2 class="card-title text-3xl mb-4">Logs</h2>
+                    <h3 class="text-xl font-bold font-mono">${run}</h2>
                     <div class="text-sm opacity-60 mt-1">Run Logs</div>
                 </div>
             </div>

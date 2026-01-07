@@ -41,7 +41,8 @@ public class RunsHandler implements Handler {
                     "bobUrl", bobClient.getBaseUrl(),
                     "runs", runs,
                     "group", group,
-                    "name", name);
+                    "name", name,
+                    "connected", cache.isHealthy());
 
             var writer = new StringWriter();
             template.process(model, writer);

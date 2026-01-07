@@ -48,7 +48,7 @@ public class BobClient {
                 LOGGER.log(Level.WARNING, "OpenAPI spec parsing warnings: {0}", result.getMessages());
             }
 
-            LOGGER.info("Successfully loaded OpenAPI specification");
+            LOGGER.fine("Successfully loaded OpenAPI specification");
             return result.getOpenAPI();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Failed to load OpenAPI spec", e);
@@ -109,7 +109,7 @@ public class BobClient {
                             (String) data.get("name")))
                     .toList();
 
-            LOGGER.log(Level.INFO, "Fetched {0} pipelines", pipelines.size());
+            LOGGER.log(Level.FINE, "Fetched {0} pipelines", pipelines.size());
             return pipelines;
 
         } catch (Exception e) {
@@ -145,7 +145,7 @@ public class BobClient {
                             (String) data.get("logger")))
                     .toList();
 
-            LOGGER.log(Level.INFO, "Fetched {0} runs for pipeline {1}/{2}", new Object[] { runs.size(), group, name });
+            LOGGER.log(Level.FINE, "Fetched {0} runs for pipeline {1}/{2}", new Object[] { runs.size(), group, name });
             return runs;
 
         } catch (Exception e) {
@@ -207,6 +207,17 @@ public class BobClient {
             return response.status() == Status.ACCEPTED_202;
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error starting pipeline", e);
+            return false;
+        }
+    }
+
+    public boolean checkHealth() {
+        try {
+            var op = getOperation("HealthCheck");
+            var response = executeRequest(op.method(), op.path());
+            return response.status() == Status.OK_200;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Health check failed", e);
             return false;
         }
     }

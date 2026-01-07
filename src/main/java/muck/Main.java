@@ -65,8 +65,7 @@ public class Main {
             cacheRefresher = new CacheRefresher(
                     bobClient,
                     pipelineCache,
-                    Duration.ofSeconds(refreshIntervalSeconds)
-            );
+                    Duration.ofSeconds(refreshIntervalSeconds));
             cacheRefresher.start(blockOnStartup);
 
             var server = WebServer.builder()
@@ -100,7 +99,7 @@ public class Main {
 
                 .get("/runs", new RunsHandler(freemarkerConfig, bobClient, pipelineCache))
 
-                .get("/logs", new LogsHandler(freemarkerConfig, bobClient))
+                .get("/logs", new LogsHandler(freemarkerConfig, bobClient, pipelineCache))
 
                 .get("/logs/stream", new LogsStreamHandler(bobClient))
 

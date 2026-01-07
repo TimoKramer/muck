@@ -18,6 +18,7 @@ public class PipelineCache {
     private volatile List<Pipeline> pipelines = List.of();
     private final ConcurrentHashMap<String, List<Run>> runsByPipeline = new ConcurrentHashMap<>();
     private volatile Instant lastUpdated = null;
+    private volatile boolean healthy = false;
 
     public List<Pipeline> getPipelines() {
         return pipelines;
@@ -31,7 +32,7 @@ public class PipelineCache {
     public void updatePipelines(List<Pipeline> newPipelines) {
         this.pipelines = List.copyOf(newPipelines);
         this.lastUpdated = Instant.now();
-        LOGGER.info("Updated pipelines cache with " + newPipelines.size() + " entries");
+        LOGGER.fine("Updated pipelines cache with " + newPipelines.size() + " entries");
     }
 
     public void updateRuns(String group, String name, List<Run> runs) {
@@ -48,6 +49,14 @@ public class PipelineCache {
 
     public Optional<Instant> getLastUpdated() {
         return Optional.ofNullable(lastUpdated);
+    }
+
+    public boolean isHealthy() {
+        return healthy;
+    }
+
+    public void setHealthy(boolean healthy) {
+        this.healthy = healthy;
     }
 
     private String makeKey(String group, String name) {

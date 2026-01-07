@@ -14,10 +14,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Handler for the home page (/)
- * Renders the main layout with HTMX setup
- */
 public class HomeHandler implements Handler {
     private static final Logger LOGGER = Logger.getLogger(HomeHandler.class.getName());
 
@@ -39,7 +35,8 @@ public class HomeHandler implements Handler {
 
             var model = Map.of(
                     "bobUrl", bobClient.getBaseUrl(),
-                    "pipelines", pipelines);
+                    "pipelines", pipelines,
+                    "connected", cache.isHealthy());
 
             var writer = new StringWriter();
             template.process(model, writer);

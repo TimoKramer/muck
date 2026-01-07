@@ -35,7 +35,8 @@ public class PipelineHandler implements Handler {
 
             var model = Map.of(
                     "bobUrl", bobClient.getBaseUrl(),
-                    "pipelines", pipelines);
+                    "pipelines", pipelines,
+                    "connected", cache.isHealthy());
 
             var writer = new StringWriter();
             template.process(model, writer);

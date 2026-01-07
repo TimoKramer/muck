@@ -1,4 +1,4 @@
-<#macro page title bobUrl connected=true>
+<#macro page title bobUrl connected>
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -24,7 +24,7 @@
                     Bob the Builder
                 </h1>
                 <p class="text-lg opacity-70">Bob CD Pipeline Monitor</p>
-                <div class="badge badge-outline badge-lg mt-2" title="${bobUrl}">
+                <div id="connected-badge" class="badge badge-outline badge-lg mt-2" title="${bobUrl}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
