@@ -1,6 +1,6 @@
 <#import "layout.ftl" as layout>
 
-<@layout.page title="Pipelines - Muck" bobUrl=bobUrl connected=connected>
+<@layout.page title="Pipelines - Muck">
     <div id="htmx-container"
          hx-get="/pipelines"
          hx-trigger="every 10s"
@@ -9,7 +9,25 @@
          hx-indicator="#loading-indicator">
         <div id="htmx-content" class="card bg-base-100 shadow-2xl">
             <div class="card-body">
-                <h2 class="card-title text-3xl mb-4">Pipelines</h2>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="card-title text-3xl">Pipelines</h2>
+                    <#if connected>
+                        <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm" title=${bobUrl}>
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                            </span>
+                            Connected
+                        </div>
+                    <#else>
+                        <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 text-red-700 text-sm">
+                            <span class="relative flex h-2 w-2">
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                            </span>
+                            Disconnected
+                        </div>
+                    </#if>
+                </div>
 
                 <#if pipelines?has_content>
                     <div class="space-y-3">

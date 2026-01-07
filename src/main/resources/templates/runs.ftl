@@ -1,6 +1,6 @@
 <#import "layout.ftl" as layout>
 
-<@layout.page title="Runs - Muck" bobUrl=bobUrl connected=connected>
+<@layout.page title="Runs - Muck">
     <div id="htmx-container"
          hx-get=""
          hx-trigger="every 10s"
@@ -9,16 +9,33 @@
          hx-indicator="#loading-indicator">
         <div id="htmx-content" class="card bg-base-100 shadow-2xl">
             <div class="card-body">
-                <div class="mb-4">
+                <div class="flex items-center justify-between mb-4">
                     <a href="/pipelines" hx-boost="true" class="btn btn-ghost btn-sm gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
                         Back to Pipelines
                     </a>
+                    <#if connected>
+                        <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm" title=${bobUrl}>
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                            </span>
+                            Connected
+                        </div>
+                    <#else>
+                        <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 text-red-700 text-sm">
+                            <span class="relative flex h-2 w-2">
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                            </span>
+                            Disconnected
+                        </div>
+                    </#if>
+                </div>
 
-                    <div class="mt-4 mb-2">
-                        <h2 class="card-title text-3xl mb-4">Runs</h2>
+                <div class="mb-4">
+                    <h2 class="card-title text-3xl mb-4">Runs</h2>
                         <h3 class="text-3xl font-bold">${name}</h2>
                         <div class="text-sm opacity-60 flex items-center gap-2 mt-1">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
