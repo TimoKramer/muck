@@ -22,4 +22,14 @@ public class ValidationHelper {
         }
     }
 
+    public static String validatePipelineId(String value, String fieldName) throws ValidationException {
+        if (value == null || value.isBlank()) {
+            throw new ValidationException(fieldName + " is required");
+        }
+        if (!value.matches("^[a-zA-Z0-9_-]+$")) {
+            throw new ValidationException(fieldName + " contains invalid characters");
+        }
+        return value;
+    }
+
 }

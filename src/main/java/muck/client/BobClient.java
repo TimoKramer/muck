@@ -170,7 +170,6 @@ public class BobClient {
 
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Exception in fetchLogs for run: " + run, e);
-            e.printStackTrace(System.err);
             throw e;
         }
     }

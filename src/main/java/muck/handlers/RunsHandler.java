@@ -30,8 +30,8 @@ public class RunsHandler implements Handler {
     @Override
     public void handle(ServerRequest req, ServerResponse res) {
         try {
-            var group = req.query().get("group");
-            var name = req.query().get("name");
+            var group = ValidationHelper.validatePipelineId(req.query().get("group"), "group");
+            var name = ValidationHelper.validatePipelineId(req.query().get("name"), "name");
 
             var runs = cache.getRuns(group, name);
 
@@ -50,6 +50,9 @@ public class RunsHandler implements Handler {
             res.header("Content-Type", "text/html; charset=utf-8");
             res.send(writer.toString());
 
+        } catch (ValidationException e) {
+            res.status(Status.BAD_REQUEST_400);
+            res.send("Invalid request: " + e.getMessage());
         } catch (NoSuchElementException e) {
             LOGGER.log(Level.INFO, "Requested run not found");
             res.status(Status.NOT_FOUND_404);

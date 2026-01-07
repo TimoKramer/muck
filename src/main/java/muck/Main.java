@@ -81,8 +81,8 @@ public class Main {
                 server.stop();
             }));
 
-            System.out.println("Muck - Bob CI/CD Monitor");
-            System.out.println("WEB server is up! http://localhost:" + server.port());
+            LOGGER.info("Muck - Bob CI/CD Monitor");
+            LOGGER.info("WEB server is up! http://localhost:" + server.port());
 
         } catch (Exception e) {
             LOGGER.severe("Unable to start Muck: " + e.getMessage());
@@ -117,13 +117,5 @@ public class Main {
         cfg.setLogTemplateExceptions(false);
         cfg.setWrapUncheckedExceptions(true);
         return cfg;
-    }
-
-    public static Configuration getFreemarkerConfig() {
-        return freemarkerConfig;
-    }
-
-    public static BobClient getBobClient() {
-        return bobClient;
     }
 }

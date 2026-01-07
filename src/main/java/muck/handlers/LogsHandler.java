@@ -27,9 +27,9 @@ public class LogsHandler implements Handler {
     @Override
     public void handle(ServerRequest req, ServerResponse res) {
         try {
-            var run = req.query().get("run");
-            var group = req.query().get("group");
-            var name = req.query().get("name");
+            var run = ValidationHelper.validateRun(req.query().get("run"));
+            var group = ValidationHelper.validatePipelineId(req.query().get("group"), "group");
+            var name = ValidationHelper.validatePipelineId(req.query().get("name"), "name");
 
             var template = freemarkerConfig.getTemplate("logs.ftl");
 
@@ -46,10 +46,13 @@ public class LogsHandler implements Handler {
             res.header("Content-Type", "text/html; charset=utf-8");
             res.send(writer.toString());
 
+        } catch (ValidationException e) {
+            res.status(Status.BAD_REQUEST_400);
+            res.send("Invalid request: " + e.getMessage());
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error fetching/rendering runs", e);
+            LOGGER.log(Level.SEVERE, "Error fetching/rendering logs", e);
             res.status(Status.INTERNAL_SERVER_ERROR_500);
-            res.send("<div class='error'>Error loading runs: " + e.getMessage() + "</div>");
+            res.send("<div class='error'>Error loading logs: " + e.getMessage() + "</div>");
         }
     }
 }
