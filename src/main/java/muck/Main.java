@@ -1,5 +1,11 @@
 package muck;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Locale;
+import java.util.logging.Logger;
+
 import freemarker.core.HTMLOutputFormat;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
@@ -8,20 +14,15 @@ import io.helidon.logging.common.LogConfig;
 import io.helidon.webserver.WebServer;
 import io.helidon.webserver.http.HttpRouting;
 import io.helidon.webserver.staticcontent.StaticContentService;
-import muck.client.BobClient;
 import muck.cache.CacheRefresher;
 import muck.cache.PipelineCache;
+import muck.client.BobClient;
 import muck.handlers.HomeHandler;
 import muck.handlers.LogsHandler;
 import muck.handlers.LogsStreamHandler;
-import muck.handlers.PipelineHandler;
+import muck.handlers.PipelinesHandler;
 import muck.handlers.RunsHandler;
 import muck.handlers.StartPipelineHandler;
-
-import java.io.IOException;
-import java.time.Duration;
-import java.util.Locale;
-import java.util.logging.Logger;
 
 public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
@@ -37,10 +38,11 @@ public class Main {
             LogConfig.configureRuntime();
 
             var config = Config.create();
+            var devMode = config.get("dev-mode").asBoolean().orElse(false);
             var serverConfig = config.get("server");
             var locale = Locale.forLanguageTag(config.get("locale").asString().orElse("en_us"));
 
-            freemarkerConfig = createFreemarkerConfig();
+            freemarkerConfig = createFreemarkerConfig(devMode);
             freemarkerConfig.setLocale(locale);
             freemarkerConfig.setOutputFormat(HTMLOutputFormat.INSTANCE);
 
@@ -95,7 +97,7 @@ public class Main {
 
                 .get("/", new HomeHandler(freemarkerConfig, bobClient, pipelineCache))
 
-                .get("/pipelines", new PipelineHandler(freemarkerConfig, bobClient, pipelineCache))
+                .get("/pipelines", new PipelinesHandler(freemarkerConfig, bobClient, pipelineCache))
 
                 .get("/runs", new RunsHandler(freemarkerConfig, bobClient, pipelineCache))
 
@@ -105,12 +107,19 @@ public class Main {
 
                 .post("/start", new StartPipelineHandler(bobLogger, bobClient, cacheRefresher))
 
+                .delete("/delete", new DeletePipelineHandler(bobClient, cacheRefresher))
+
                 .get("/health", (req, res) -> res.send("OK"));
     }
 
-    private static Configuration createFreemarkerConfig() throws IOException {
+    private static Configuration createFreemarkerConfig(boolean devMode) throws IOException {
         var cfg = new Configuration(Configuration.VERSION_2_3_33);
-        cfg.setClassLoaderForTemplateLoading(Main.class.getClassLoader(), "templates");
+        if (devMode) {
+            cfg.setDirectoryForTemplateLoading(new File("src/main/resources/templates"));
+            cfg.setTemplateUpdateDelayMilliseconds(0);
+        } else {
+            cfg.setClassLoaderForTemplateLoading(Main.class.getClassLoader(), "templates");
+        }
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         cfg.setLogTemplateExceptions(false);

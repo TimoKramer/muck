@@ -1,13 +1,14 @@
 package muck.cache;
 
-import muck.model.Pipeline;
-import muck.model.Run;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+
+import io.helidon.http.NotFoundException;
+import muck.model.Pipeline;
+import muck.model.Run;
 
 /**
  * Thread-safe in-memory cache for pipeline and run data.
@@ -22,6 +23,15 @@ public class PipelineCache {
 
     public List<Pipeline> getPipelines() {
         return pipelines;
+    }
+
+    public Pipeline getPipeline(String group, String name) {
+        return getPipelines()
+                .stream()
+                .filter(p -> p.group().equals(group) && p.name().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(
+                        String.format("Pipeline for group %s and name %s not found", group, name)));
     }
 
     public List<Run> getRuns(String group, String name) {

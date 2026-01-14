@@ -35,7 +35,7 @@ public class RunsHandler implements Handler {
 
             var runs = cache.getRuns(group, name);
 
-            var template = freemarkerConfig.getTemplate("runs.ftl");
+            var template = freemarkerConfig.getTemplate("details.ftl");
 
             var model = Map.of(
                     "bobUrl", bobClient.getBaseUrl(),

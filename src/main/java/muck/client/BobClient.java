@@ -211,6 +211,21 @@ public class BobClient {
         }
     }
 
+    public boolean deletePipeline(String group, String name) {
+        try {
+            var op = getOperation("PipelineDelete");
+            var path = op.path()
+                    .replace("{group}", group)
+                    .replace("{name}", name);
+            var response = executeRequest(op.method(), path);
+
+            return response.status() == Status.OK_200;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error deleting pipeline", e);
+            return false;
+        }
+    }
+
     public boolean checkHealth() {
         try {
             var op = getOperation("HealthCheck");

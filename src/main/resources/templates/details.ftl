@@ -29,9 +29,38 @@
                     </#if>
                 </div>
 
-                <div class="mb-4">
-                    <h2 class="text-xl font-semibold">${name}</h2>
-                    <div class="text-sm text-base-content/60 mt-1">${group}</div>
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-xl font-semibold">${name}</h2>
+                        <div class="text-sm text-base-content/60 mt-1">${group}</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="btn btn-outline btn-sm gap-1"
+                                hx-post="/start?group=${group}&name=${name}"
+                                hx-swap="none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M10 8l6 4-6 4V8z" fill="currentColor" stroke="none"/>
+                            </svg>
+                            Start
+                        </button>
+                        <a class="btn btn-outline btn-sm gap-1"
+                           href="/pipeline/yaml?group=${group}&name=${name}"
+                           download="${group}-${name}.yaml">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Download
+                        </a>
+                        <button class="btn btn-outline btn-sm gap-1 text-error border-error hover:bg-error hover:text-error-content"
+                                hx-delete="/delete?group=${group}&name=${name}"
+                                hx-confirm="Delete pipeline ${group} ${name}?">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Delete
+                        </button>
+                    </div>
                 </div>
 
                 <#if runs?has_content>
@@ -64,12 +93,31 @@
                                             </#if>
                                         </div>
                                     </div>
-                                    <#if run.logger?has_content>
-                                        <a class="btn btn-outline btn-sm"
-                                           href="/logs?group=${group}&name=${name}&run=${run.runId}">
-                                            Logs
-                                        </a>
-                                    </#if>
+                                    <div class="flex items-center gap-2">
+                                        <#if run.status == "running">
+                                            <button class="btn btn-ghost btn-xs" title="Stop run"
+                                                    hx-post="/run/stop?run=${run.runId}"
+                                                    hx-swap="none">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <rect x="6" y="6" width="12" height="12" rx="1" fill="currentColor" stroke="none"/>
+                                                </svg>
+                                            </button>
+                                            <button class="btn btn-ghost btn-xs" title="Pause run"
+                                                    hx-post="/run/pause?run=${run.runId}"
+                                                    hx-swap="none">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/>
+                                                    <rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/>
+                                                </svg>
+                                            </button>
+                                        </#if>
+                                        <#if run.logger?has_content>
+                                            <a class="btn btn-ghost btn-sm"
+                                               href="/logs?group=${group}&name=${name}&run=${run.runId}">
+                                                Logs
+                                            </a>
+                                        </#if>
+                                    </div>
                                 </div>
                             </div>
                         </#list>

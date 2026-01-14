@@ -13,14 +13,14 @@ import io.helidon.webserver.http.ServerResponse;
 import muck.cache.PipelineCache;
 import muck.client.BobClient;
 
-public class PipelineHandler implements Handler {
-    private static final Logger LOGGER = Logger.getLogger(PipelineHandler.class.getName());
+public class PipelinesHandler implements Handler {
+    private static final Logger LOGGER = Logger.getLogger(PipelinesHandler.class.getName());
 
     private final Configuration freemarkerConfig;
     private final BobClient bobClient;
     private final PipelineCache cache;
 
-    public PipelineHandler(Configuration freemarkerConfig, BobClient bobClient, PipelineCache cache) {
+    public PipelinesHandler(Configuration freemarkerConfig, BobClient bobClient, PipelineCache cache) {
         this.freemarkerConfig = freemarkerConfig;
         this.bobClient = bobClient;
         this.cache = cache;

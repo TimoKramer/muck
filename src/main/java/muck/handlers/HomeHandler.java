@@ -1,18 +1,17 @@
 package muck.handlers;
 
+import java.io.StringWriter;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import freemarker.template.Configuration;
-import freemarker.template.Template;
 import io.helidon.http.Status;
 import io.helidon.webserver.http.Handler;
 import io.helidon.webserver.http.ServerRequest;
 import io.helidon.webserver.http.ServerResponse;
 import muck.cache.PipelineCache;
 import muck.client.BobClient;
-
-import java.io.StringWriter;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class HomeHandler implements Handler {
     private static final Logger LOGGER = Logger.getLogger(HomeHandler.class.getName());

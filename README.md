@@ -132,3 +132,10 @@ Contributions welcome! Please ensure:
 - Templates are valid FreeMarker
 - HTMX attributes are properly used
 - OpenAPI spec validation passes
+
+## TODOs
+- [] Download pipeline
+- [] Create/Update pipeline
+- [] Stop pipeline
+- [] Pause pipeline
+- [] Unpause pipeline
