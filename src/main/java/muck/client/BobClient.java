@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import io.helidon.http.HeaderNames;
 import io.helidon.http.Method;
 import io.helidon.http.Status;
 import io.helidon.webclient.http1.Http1Client;
@@ -223,6 +224,209 @@ public class BobClient {
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error deleting pipeline", e);
             return false;
+        }
+    }
+
+    public boolean stopPipeline(String runId) {
+        try {
+            var op = getOperation("PipelineStop");
+            var path = op.path().replace("{run-id}", runId);
+            var response = executeRequest(op.method(), path);
+
+            return response.status() == Status.ACCEPTED_202;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error stopping pipeline", e);
+            return false;
+        }
+    }
+
+    public boolean createPipeline(String body) {
+        try {
+            var op = getOperation("PipelineCreate");
+            var response = client.method(op.method())
+                    .path(op.path())
+                    .header(HeaderNames.CONTENT_TYPE, "application/json")
+                    .submit(body);
+
+            return response.status() == Status.ACCEPTED_202;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error creating pipeline", e);
+            return false;
+        }
+    }
+
+    public boolean pausePipeline(String group, String name) {
+        try {
+            var op = getOperation("PipelinePause");
+            var path = op.path()
+                    .replace("{group}", group)
+                    .replace("{name}", name);
+            var response = executeRequest(op.method(), path);
+
+            return response.status() == Status.ACCEPTED_202;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error pausing pipeline", e);
+            return false;
+        }
+    }
+
+    public boolean unpausePipeline(String group, String name) {
+        try {
+            var op = getOperation("PipelineUnpause");
+            var path = op.path()
+                    .replace("{group}", group)
+                    .replace("{name}", name);
+            var response = executeRequest(op.method(), path);
+
+            return response.status() == Status.ACCEPTED_202;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error unpausing pipeline", e);
+            return false;
+        }
+    }
+
+    public Http1ClientResponse fetchArtifact(String group, String name, String runId, String store, String artifact) {
+        var op = getOperation("PipelineArtifactFetch");
+        var path = op.path()
+                .replace("{group}", group)
+                .replace("{name}", name)
+                .replace("{id}", runId)
+                .replace("{store-name}", store)
+                .replace("{artifact-name}", artifact);
+
+        LOGGER.log(Level.INFO, "Fetching artifact from Bob: method={0}, url={1}",
+                new Object[] { op.method(), baseUrl + path });
+
+        return client.method(op.method())
+                .readTimeout(Duration.ZERO)
+                .path(path)
+                .request();
+    }
+
+    public List<Map<String, Object>> listResourceProviders() {
+        try {
+            var op = getOperation("ResourceProviderList");
+            var response = executeRequest(op.method(), op.path());
+
+            if (response.status() != Status.OK_200) {
+                LOGGER.log(Level.WARNING, "Failed to fetch resource providers: {0}", response.status());
+                return List.of();
+            }
+
+            Map<String, Object> body = response.as(Map.class);
+            return (List<Map<String, Object>>) body.get("message");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error fetching resource providers", e);
+            return List.of();
+        }
+    }
+
+    public boolean createResourceProvider(String body) {
+        try {
+            var op = getOperation("ResourceProviderCreate");
+            var response = client.method(op.method())
+                    .path(op.path())
+                    .header(HeaderNames.CONTENT_TYPE, "application/json")
+                    .submit(body);
+
+            return response.status() == Status.ACCEPTED_202;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error creating resource provider", e);
+            return false;
+        }
+    }
+
+    public boolean deleteResourceProvider(String name) {
+        try {
+            var op = getOperation("ResourceProviderDelete");
+            var path = op.path().replace("{name}", name);
+            var response = executeRequest(op.method(), path);
+
+            return response.status() == Status.ACCEPTED_202;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error deleting resource provider", e);
+            return false;
+        }
+    }
+
+    public List<Map<String, Object>> listArtifactStores() {
+        try {
+            var op = getOperation("ArtifactStoreList");
+            var response = executeRequest(op.method(), op.path());
+
+            if (response.status() != Status.OK_200) {
+                LOGGER.log(Level.WARNING, "Failed to fetch artifact stores: {0}", response.status());
+                return List.of();
+            }
+
+            Map<String, Object> body = response.as(Map.class);
+            return (List<Map<String, Object>>) body.get("message");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error fetching artifact stores", e);
+            return List.of();
+        }
+    }
+
+    public List<Map<String, Object>> listLoggers() {
+        try {
+            var op = getOperation("LoggerList");
+            var response = executeRequest(op.method(), op.path());
+
+            if (response.status() != Status.OK_200) {
+                LOGGER.log(Level.WARNING, "Failed to fetch loggers: {0}", response.status());
+                return List.of();
+            }
+
+            Map<String, Object> body = response.as(Map.class);
+            return (List<Map<String, Object>>) body.get("message");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error fetching loggers", e);
+            return List.of();
+        }
+    }
+
+    public boolean createLogger(String body) {
+        try {
+            var op = getOperation("LoggerCreate");
+            var response = client.method(op.method())
+                    .path(op.path())
+                    .header(HeaderNames.CONTENT_TYPE, "application/json")
+                    .submit(body);
+
+            return response.status() == Status.ACCEPTED_202;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error creating logger", e);
+            return false;
+        }
+    }
+
+    public boolean deleteLogger(String name) {
+        try {
+            var op = getOperation("LoggerDelete");
+            var path = op.path().replace("{name}", name);
+            var response = executeRequest(op.method(), path);
+
+            return response.status() == Status.ACCEPTED_202;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error deleting logger", e);
+            return false;
+        }
+    }
+
+    public Map<String, Object> getClusterInfo() {
+        try {
+            var op = getOperation("ClusterInfo");
+            var response = executeRequest(op.method(), op.path());
+
+            if (response.status() != Status.OK_200) {
+                LOGGER.log(Level.WARNING, "Failed to fetch cluster info: {0}", response.status());
+                return Map.of();
+            }
+
+            return response.as(Map.class);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error fetching cluster info", e);
+            return Map.of();
         }
     }
 

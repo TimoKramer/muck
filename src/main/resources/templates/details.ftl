@@ -110,6 +110,15 @@
                                                     <rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/>
                                                 </svg>
                                             </button>
+                                        <#elseif run.status == "paused">
+                                            <button class="btn btn-ghost btn-xs" title="Unpause run"
+                                                    hx-post="/run/unpause?run=${run.runId}"
+                                                    hx-swap="none">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="10"/>
+                                                    <path d="M10 8l6 4-6 4V8z" fill="currentColor" stroke="none"/>
+                                                </svg>
+                                            </button>
                                         </#if>
                                         <#if run.logger?has_content>
                                             <a class="btn btn-ghost btn-sm"
