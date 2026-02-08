@@ -163,7 +163,7 @@
                     createPipelineModal.close();
                     evt.detail.elt.reset();
                     errorDiv.classList.add('hidden');
-                    htmx.trigger('#htmx-container', 'htmx:load');
+                    htmx.ajax('GET', '/pipelines', {target: '#htmx-container', swap: 'outerHTML'});
                 } else {
                     errorDiv.classList.remove('hidden');
                     const errorText = evt.detail.xhr.responseText || 'Failed to create pipeline';
