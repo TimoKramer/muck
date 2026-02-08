@@ -1,7 +1,7 @@
 package muck.handlers;
 
 import java.io.StringWriter;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,12 +30,13 @@ public class HomeHandler implements Handler {
     public void handle(ServerRequest req, ServerResponse res) {
         try {
             var pipelines = cache.getPipelines();
+
             var template = freemarkerConfig.getTemplate("pipelines.ftl");
 
-            var model = Map.of(
-                    "bobUrl", bobClient.getBaseUrl(),
-                    "pipelines", pipelines,
-                    "connected", cache.isHealthy());
+            var model = new HashMap<String, Object>();
+            model.put("bobUrl", bobClient.getBaseUrl());
+            model.put("pipelines", pipelines);
+            model.put("connected", cache.isHealthy());
 
             var writer = new StringWriter();
             template.process(model, writer);
@@ -47,7 +48,7 @@ public class HomeHandler implements Handler {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error rendering home page", e);
             res.status(Status.INTERNAL_SERVER_ERROR_500);
-            res.send("Error rendering page: " + e.getMessage());
+            res.send("<div class='error'>Error rendering home page: " + e.getMessage() + "</div>");
         }
     }
 }

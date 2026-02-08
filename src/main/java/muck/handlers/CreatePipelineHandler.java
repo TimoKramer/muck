@@ -1,5 +1,7 @@
 package muck.handlers;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -7,6 +9,9 @@ import io.helidon.http.Status;
 import io.helidon.webserver.http.Handler;
 import io.helidon.webserver.http.ServerRequest;
 import io.helidon.webserver.http.ServerResponse;
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
 import muck.client.BobClient;
 
 public class CreatePipelineHandler implements Handler {
@@ -21,29 +26,65 @@ public class CreatePipelineHandler implements Handler {
     @Override
     public void handle(ServerRequest req, ServerResponse res) {
         try {
-            var body = req.content().as(String.class);
+            var params = req.content().as(io.helidon.common.parameters.Parameters.class);
 
-            if (body == null || body.isBlank()) {
+            var group = params.first("group").orElse("");
+            var name = params.first("name").orElse("");
+            var image = params.first("image").orElse("");
+            var stepsText = params.first("steps").orElse("");
+            var varsText = params.first("vars").orElse("");
+
+            if (group.isBlank() || name.isBlank() || image.isBlank() || stepsText.isBlank()) {
                 res.status(Status.BAD_REQUEST_400);
-                res.send("Request body is required");
+                res.send("Missing required fields");
                 return;
             }
 
-            LOGGER.log(Level.INFO, "Creating pipeline");
+            JsonObjectBuilder pipeline = Json.createObjectBuilder()
+                    .add("group", group)
+                    .add("name", name)
+                    .add("image", image);
+
+            JsonArrayBuilder stepsArray = Json.createArrayBuilder();
+            for (String line : stepsText.split("\n")) {
+                String cmd = line.trim();
+                if (!cmd.isEmpty()) {
+                    stepsArray.add(Json.createObjectBuilder().add("cmd", cmd));
+                }
+            }
+            pipeline.add("steps", stepsArray);
+
+            // Parse environment variables (KEY=VALUE per line)
+            if (!varsText.isBlank()) {
+                JsonObjectBuilder varsObj = Json.createObjectBuilder();
+                for (String line : varsText.split("\n")) {
+                    String trimmed = line.trim();
+                    int eqIdx = trimmed.indexOf('=');
+                    if (eqIdx > 0) {
+                        String key = trimmed.substring(0, eqIdx).trim();
+                        String value = trimmed.substring(eqIdx + 1).trim();
+                        varsObj.add(key, value);
+                    }
+                }
+                pipeline.add("vars", varsObj);
+            }
+
+            String body = pipeline.build().toString();
+            LOGGER.log(Level.INFO, "Creating pipeline: {0}", body);
 
             var success = bobClient.createPipeline(body);
 
             if (success) {
                 res.status(Status.ACCEPTED_202);
-                res.send("{\"message\": \"Pipeline created\"}");
+                res.send("Pipeline created");
             } else {
                 res.status(Status.INTERNAL_SERVER_ERROR_500);
-                res.send("{\"message\": \"Failed to create pipeline\"}");
+                res.send("Failed to create pipeline");
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error creating pipeline", e);
             res.status(Status.INTERNAL_SERVER_ERROR_500);
-            res.send("{\"message\": \"Error: " + e.getMessage() + "\"}");
+            res.send("Error: " + e.getMessage());
         }
     }
 }

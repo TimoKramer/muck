@@ -1,7 +1,7 @@
 package muck.handlers;
 
 import java.io.StringWriter;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,13 +30,15 @@ public class PipelinesHandler implements Handler {
     public void handle(ServerRequest req, ServerResponse res) {
         try {
             var pipelines = cache.getPipelines();
+            var loggers = bobClient.listLoggers();
 
             var template = freemarkerConfig.getTemplate("pipelines.ftl");
 
-            var model = Map.of(
-                    "bobUrl", bobClient.getBaseUrl(),
-                    "pipelines", pipelines,
-                    "connected", cache.isHealthy());
+            var model = new HashMap<String, Object>();
+            model.put("bobUrl", bobClient.getBaseUrl());
+            model.put("pipelines", pipelines);
+            model.put("connected", cache.isHealthy());
+            model.put("loggers", loggers);
 
             var writer = new StringWriter();
             template.process(model, writer);

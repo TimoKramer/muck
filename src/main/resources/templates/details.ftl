@@ -86,10 +86,10 @@
                                         </div>
                                         <div class="text-xs text-base-content/60 flex flex-wrap gap-x-4 gap-y-1">
                                             <#if run.scheduledAt?has_content>
-                                                <span>Scheduled: ${run.scheduledAt}</span>
+                                                <span>Scheduled: ${run.scheduledAt?datetime.iso?string("MMM d, yyyy HH:mm")}</span>
                                             </#if>
                                             <#if run.completedAt?has_content>
-                                                <span>Completed: ${run.completedAt}</span>
+                                                <span>Completed: ${run.completedAt?datetime.iso?string("MMM d, yyyy HH:mm")}</span>
                                             </#if>
                                         </div>
                                     </div>
@@ -145,4 +145,5 @@
             </div>
         </div>
     </div>
+
 </@layout.page>

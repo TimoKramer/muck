@@ -1,2 +1,3 @@
-/* Additional custom styles can be added here */
-/* The main styles are already included in layout.ftl */
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}

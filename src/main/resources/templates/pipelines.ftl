@@ -11,17 +11,25 @@
             <div class="card-body">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-xl font-semibold">Pipelines</h2>
-                    <#if connected>
-                        <div class="badge badge-outline badge-sm gap-1 text-success border-success" title="${bobUrl}">
-                            <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
-                            Connected
-                        </div>
-                    <#else>
-                        <div class="badge badge-outline badge-sm gap-1 text-error border-error">
-                            <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                            Disconnected
-                        </div>
-                    </#if>
+                    <div class="flex items-center gap-2">
+                        <button class="btn btn-primary btn-sm" onclick="createPipelineModal.showModal()">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                            New Pipeline
+                        </button>
+                        <#if connected>
+                            <div class="badge badge-outline badge-sm gap-1 text-success border-success" title="${bobUrl}">
+                                <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
+                                Connected
+                            </div>
+                        <#else>
+                            <div class="badge badge-outline badge-sm gap-1 text-error border-error">
+                                <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                                Disconnected
+                            </div>
+                        </#if>
+                    </div>
                 </div>
 
                 <#if pipelines?has_content>
@@ -82,4 +90,86 @@
             </div>
         </div>
     </div>
+
+    <!-- Create Pipeline Modal -->
+    <dialog id="createPipelineModal" class="modal">
+        <div class="modal-box max-w-2xl">
+            <h3 class="font-bold text-lg mb-4">Create Pipeline</h3>
+            <form id="createPipelineForm" class="space-y-4"
+                  hx-post="/create"
+                  hx-target="#createPipelineError"
+                  hx-swap="innerHTML"
+                  hx-indicator="#createPipelineLoading">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Group</span>
+                        </label>
+                        <input type="text" name="group" placeholder="e.g., dev"
+                               class="input input-bordered w-full" required>
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Name</span>
+                        </label>
+                        <input type="text" name="name" placeholder="e.g., my-pipeline"
+                               class="input input-bordered w-full" required>
+                    </div>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Image</span>
+                    </label>
+                    <input type="text" name="image" placeholder="e.g., alpine:latest"
+                           class="input input-bordered w-full" required>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Steps (one command per line)</span>
+                    </label>
+                    <textarea name="steps"
+                              placeholder="echo Hello World&#10;ls -la&#10;echo Done"
+                              class="textarea textarea-bordered w-full h-32" required></textarea>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Environment Variables (optional, KEY=VALUE per line)</span>
+                    </label>
+                    <textarea name="vars"
+                              placeholder="DEBUG=true&#10;LOG_LEVEL=info"
+                              class="textarea textarea-bordered w-full h-20"></textarea>
+                </div>
+                <div id="createPipelineError" class="alert alert-error hidden">
+                </div>
+                <div class="modal-action">
+                    <button type="button" class="btn" onclick="createPipelineModal.close()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="loading loading-spinner loading-sm htmx-indicator" id="createPipelineLoading"></span>
+                        Create
+                    </button>
+                </div>
+            </form>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    <script>
+        document.body.addEventListener('htmx:afterRequest', function(evt) {
+            if (evt.detail.elt.id === 'createPipelineForm') {
+                const errorDiv = document.getElementById('createPipelineError');
+                if (evt.detail.successful) {
+                    createPipelineModal.close();
+                    evt.detail.elt.reset();
+                    errorDiv.classList.add('hidden');
+                    htmx.trigger('#htmx-container', 'htmx:load');
+                } else {
+                    errorDiv.classList.remove('hidden');
+                    const errorText = evt.detail.xhr.responseText || 'Failed to create pipeline';
+                    errorDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span>' + errorText + '</span>';
+                }
+            }
+        });
+    </script>
 </@layout.page>

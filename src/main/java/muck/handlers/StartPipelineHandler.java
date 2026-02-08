@@ -43,6 +43,7 @@ public class StartPipelineHandler implements Handler {
         if (success) {
             cacheRefresher.triggerRefresh();
             res.status(Status.NO_CONTENT_204);
+            res.send();
         } else {
             res.status(Status.INTERNAL_SERVER_ERROR_500);
             res.send("Failed to start pipeline");

@@ -17,6 +17,7 @@ import io.helidon.webserver.staticcontent.StaticContentService;
 import muck.cache.CacheRefresher;
 import muck.cache.PipelineCache;
 import muck.client.BobClient;
+import muck.handlers.CreatePipelineHandler;
 import muck.handlers.HomeHandler;
 import muck.handlers.LogsHandler;
 import muck.handlers.LogsStreamHandler;
@@ -106,6 +107,8 @@ public class Main {
                 .get("/logs/stream", new LogsStreamHandler(bobClient))
 
                 .post("/start", new StartPipelineHandler(bobLogger, bobClient, cacheRefresher))
+
+                .post("/create", new CreatePipelineHandler(bobClient))
 
                 .delete("/delete", new DeletePipelineHandler(bobClient, cacheRefresher))
 
