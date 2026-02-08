@@ -75,7 +75,7 @@ public class CreatePipelineHandler implements Handler {
             var success = bobClient.createPipeline(body);
 
             if (success) {
-                res.status(Status.ACCEPTED_202);
+                res.status(Status.OK_200);
                 res.send("Pipeline created");
             } else {
                 res.status(Status.INTERNAL_SERVER_ERROR_500);

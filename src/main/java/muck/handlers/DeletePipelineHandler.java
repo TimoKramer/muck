@@ -37,7 +37,8 @@ public class DeletePipelineHandler implements Handler {
         var success = bobClient.deletePipeline(group, name);
 
         if (success) {
-            res.status(Status.NO_CONTENT_204);
+            res.status(Status.OK_200);
+            res.header("HX-Redirect", "/");
             res.send();
         } else {
             res.status(Status.INTERNAL_SERVER_ERROR_500);

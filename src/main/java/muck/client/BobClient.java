@@ -119,6 +119,20 @@ public class BobClient {
         }
     }
 
+    public List<Pipeline> listPipelinesWithStatus() {
+        var pipelines = listPipelines();
+        return pipelines.stream()
+                .map(p -> {
+                    var runs = listRuns(p.group(), p.name());
+                    var latestStatus = runs.stream()
+                            .max(java.util.Comparator.comparing(Run::scheduledAt))
+                            .map(Run::status)
+                            .orElse("unknown");
+                    return p.withStatus(latestStatus);
+                })
+                .toList();
+    }
+
     public List<Run> listRuns(String group, String name) {
         try {
             var op = getOperation("PipelineRuns");
@@ -219,8 +233,9 @@ public class BobClient {
                     .replace("{group}", group)
                     .replace("{name}", name);
             var response = executeRequest(op.method(), path);
+            LOGGER.warning("DELETE: " + response.status().toString());
 
-            return response.status() == Status.OK_200;
+            return response.status() == Status.ACCEPTED_202;
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error deleting pipeline", e);
             return false;

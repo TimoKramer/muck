@@ -2,7 +2,6 @@ package muck.handlers;
 
 import java.io.StringWriter;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,7 +10,6 @@ import io.helidon.http.Status;
 import io.helidon.webserver.http.Handler;
 import io.helidon.webserver.http.ServerRequest;
 import io.helidon.webserver.http.ServerResponse;
-import muck.cache.PipelineCache;
 import muck.client.BobClient;
 
 public class LogsHandler implements Handler {
@@ -19,12 +17,10 @@ public class LogsHandler implements Handler {
 
     private final Configuration freemarkerConfig;
     private final BobClient bobClient;
-    private final PipelineCache cache;
 
-    public LogsHandler(Configuration freemarkerConfig, BobClient bobClient, PipelineCache cache) {
+    public LogsHandler(Configuration freemarkerConfig, BobClient bobClient) {
         this.freemarkerConfig = freemarkerConfig;
         this.bobClient = bobClient;
-        this.cache = cache;
     }
 
     @Override
@@ -41,7 +37,7 @@ public class LogsHandler implements Handler {
                     "run", run,
                     "group", group,
                     "name", name,
-                    "connected", cache.isHealthy());
+                    "connected", bobClient.checkHealth());
 
             var writer = new StringWriter();
             template.process(model, writer);

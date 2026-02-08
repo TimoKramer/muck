@@ -8,7 +8,6 @@ import io.helidon.http.Status;
 import io.helidon.webserver.http.Handler;
 import io.helidon.webserver.http.ServerRequest;
 import io.helidon.webserver.http.ServerResponse;
-import muck.cache.CacheRefresher;
 import muck.client.BobClient;
 
 public class StartPipelineHandler implements Handler {
@@ -16,12 +15,10 @@ public class StartPipelineHandler implements Handler {
 
     private final BobClient bobClient;
     private final String bobLogger;
-    private final CacheRefresher cacheRefresher;
 
-    public StartPipelineHandler(String bobLogger, BobClient bobClient, CacheRefresher cacheRefresher) {
+    public StartPipelineHandler(String bobLogger, BobClient bobClient) {
         this.bobClient = bobClient;
         this.bobLogger = bobLogger;
-        this.cacheRefresher = cacheRefresher;
     }
 
     @Override
@@ -41,7 +38,6 @@ public class StartPipelineHandler implements Handler {
         var success = bobClient.startPipeline(group, name, bobLogger);
 
         if (success) {
-            cacheRefresher.triggerRefresh();
             res.status(Status.NO_CONTENT_204);
             res.send();
         } else {

@@ -10,7 +10,6 @@ import io.helidon.http.Status;
 import io.helidon.webserver.http.Handler;
 import io.helidon.webserver.http.ServerRequest;
 import io.helidon.webserver.http.ServerResponse;
-import muck.cache.PipelineCache;
 import muck.client.BobClient;
 
 public class PipelinesHandler implements Handler {
@@ -18,18 +17,16 @@ public class PipelinesHandler implements Handler {
 
     private final Configuration freemarkerConfig;
     private final BobClient bobClient;
-    private final PipelineCache cache;
 
-    public PipelinesHandler(Configuration freemarkerConfig, BobClient bobClient, PipelineCache cache) {
+    public PipelinesHandler(Configuration freemarkerConfig, BobClient bobClient) {
         this.freemarkerConfig = freemarkerConfig;
         this.bobClient = bobClient;
-        this.cache = cache;
     }
 
     @Override
     public void handle(ServerRequest req, ServerResponse res) {
         try {
-            var pipelines = cache.getPipelines();
+            var pipelines = bobClient.listPipelinesWithStatus();
             var loggers = bobClient.listLoggers();
 
             var template = freemarkerConfig.getTemplate("pipelines.ftl");
@@ -37,7 +34,7 @@ public class PipelinesHandler implements Handler {
             var model = new HashMap<String, Object>();
             model.put("bobUrl", bobClient.getBaseUrl());
             model.put("pipelines", pipelines);
-            model.put("connected", cache.isHealthy());
+            model.put("connected", bobClient.checkHealth());
             model.put("loggers", loggers);
 
             var writer = new StringWriter();
