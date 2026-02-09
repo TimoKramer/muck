@@ -400,6 +400,34 @@ public class BobClient {
         }
     }
 
+    public boolean createArtifactStore(String body) {
+        try {
+            var op = getOperation("ArtifactStoreCreate");
+            var response = client.method(op.method())
+                    .path(op.path())
+                    .header(HeaderNames.CONTENT_TYPE, "application/json")
+                    .submit(body);
+
+            return response.status() == Status.ACCEPTED_202;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error creating artifact store", e);
+            return false;
+        }
+    }
+
+    public boolean deleteArtifactStore(String name) {
+        try {
+            var op = getOperation("ArtifactStoreDelete");
+            var path = op.path().replace("{name}", name);
+            var response = executeRequest(op.method(), path);
+
+            return response.status() == Status.ACCEPTED_202;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error deleting artifact store", e);
+            return false;
+        }
+    }
+
     public boolean createLogger(String body) {
         try {
             var op = getOperation("LoggerCreate");

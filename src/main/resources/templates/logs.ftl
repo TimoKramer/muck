@@ -1,6 +1,6 @@
 <#import "layout.ftl" as layout>
 
-<@layout.page title="Logs - Muck">
+<@layout.page title="Logs - Muck" activePage="pipelines">
     <div class="card bg-base-100 shadow-sm">
         <div class="card-body">
             <div class="flex items-center justify-between mb-4">

@@ -14,14 +14,27 @@ import io.helidon.webserver.WebServer;
 import io.helidon.webserver.http.HttpRouting;
 import io.helidon.webserver.staticcontent.StaticContentService;
 import muck.client.BobClient;
+import muck.handlers.ArtifactStoresPageHandler;
+import muck.handlers.CreateArtifactStoreHandler;
+import muck.handlers.CreateLoggerHandler;
 import muck.handlers.CreatePipelineHandler;
+import muck.handlers.CreateResourceProviderHandler;
+import muck.handlers.DeleteArtifactStoreHandler;
+import muck.handlers.DeleteLoggerHandler;
 import muck.handlers.DeletePipelineHandler;
+import muck.handlers.DeleteResourceProviderHandler;
+import muck.handlers.FetchArtifactHandler;
 import muck.handlers.HomeHandler;
+import muck.handlers.LoggersPageHandler;
 import muck.handlers.LogsHandler;
 import muck.handlers.LogsStreamHandler;
+import muck.handlers.PausePipelineHandler;
 import muck.handlers.PipelinesHandler;
+import muck.handlers.ResourceProvidersPageHandler;
 import muck.handlers.RunsHandler;
 import muck.handlers.StartPipelineHandler;
+import muck.handlers.StopPipelineHandler;
+import muck.handlers.UnpausePipelineHandler;
 
 public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
@@ -76,22 +89,42 @@ public class Main {
                 .register("/static", StaticContentService.builder("static")
                         .build())
 
+                // Pipelines
                 .get("/", new HomeHandler(freemarkerConfig, bobClient))
-
                 .get("/pipelines", new PipelinesHandler(freemarkerConfig, bobClient))
-
                 .get("/runs", new RunsHandler(freemarkerConfig, bobClient))
-
-                .get("/logs", new LogsHandler(freemarkerConfig, bobClient))
-
-                .get("/logs/stream", new LogsStreamHandler(bobClient))
-
                 .post("/start", new StartPipelineHandler(bobLogger, bobClient))
-
                 .post("/create", new CreatePipelineHandler(bobClient))
-
                 .delete("/delete", new DeletePipelineHandler(bobClient))
 
+                // Pipeline run controls
+                .post("/run/stop", new StopPipelineHandler(bobClient))
+                .post("/run/pause", new PausePipelineHandler(bobClient))
+                .post("/run/unpause", new UnpausePipelineHandler(bobClient))
+
+                // Logs
+                .get("/logs", new LogsHandler(freemarkerConfig, bobClient))
+                .get("/logs/stream", new LogsStreamHandler(bobClient))
+
+                // Artifacts
+                .get("/artifact", new FetchArtifactHandler(bobClient))
+
+                // Loggers
+                .get("/loggers", new LoggersPageHandler(freemarkerConfig, bobClient))
+                .post("/loggers", new CreateLoggerHandler(bobClient))
+                .delete("/loggers", new DeleteLoggerHandler(bobClient))
+
+                // Resource Providers
+                .get("/resource-providers", new ResourceProvidersPageHandler(freemarkerConfig, bobClient))
+                .post("/resource-providers", new CreateResourceProviderHandler(bobClient))
+                .delete("/resource-providers", new DeleteResourceProviderHandler(bobClient))
+
+                // Artifact Stores
+                .get("/artifact-stores", new ArtifactStoresPageHandler(freemarkerConfig, bobClient))
+                .post("/artifact-stores", new CreateArtifactStoreHandler(bobClient))
+                .delete("/artifact-stores", new DeleteArtifactStoreHandler(bobClient))
+
+                // Health
                 .get("/health", (req, res) -> res.send("OK"));
     }
 

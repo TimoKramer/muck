@@ -1,6 +1,6 @@
 <#import "layout.ftl" as layout>
 
-<@layout.page title="Pipelines - Muck">
+<@layout.page title="Pipelines - Muck" activePage="pipelines">
     <div id="htmx-container"
          hx-get="/pipelines"
          hx-trigger="every 10s"

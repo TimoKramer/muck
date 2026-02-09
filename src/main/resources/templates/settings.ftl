@@ -1,6 +1,6 @@
 <#import "layout.ftl" as layout>
 
-<@layout.page title="Settings - Muck">
+<@layout.page title="Settings - Muck" activePage="settings">
     <div id="settings-page" data-signals="{activeTab: 'resource-providers', newName: '', newUrl: ''}">
         <div class="card bg-base-100 shadow-sm">
             <div class="card-body">

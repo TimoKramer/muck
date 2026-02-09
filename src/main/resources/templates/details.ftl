@@ -1,6 +1,6 @@
 <#import "layout.ftl" as layout>
 
-<@layout.page title="Runs - Muck">
+<@layout.page title="Runs - Muck" activePage="pipelines">
     <div id="htmx-container"
          hx-get=""
          hx-trigger="every 10s"
@@ -102,8 +102,8 @@
                                                     <rect x="6" y="6" width="12" height="12" rx="1" fill="currentColor" stroke="none"/>
                                                 </svg>
                                             </button>
-                                            <button class="btn btn-ghost btn-xs" title="Pause run"
-                                                    hx-post="/run/pause?run=${run.runId}"
+                                            <button class="btn btn-ghost btn-xs" title="Pause pipeline"
+                                                    hx-post="/run/pause?group=${group}&name=${name}"
                                                     hx-swap="none">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                     <rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/>
@@ -111,8 +111,8 @@
                                                 </svg>
                                             </button>
                                         <#elseif run.status == "paused">
-                                            <button class="btn btn-ghost btn-xs" title="Unpause run"
-                                                    hx-post="/run/unpause?run=${run.runId}"
+                                            <button class="btn btn-ghost btn-xs" title="Unpause pipeline"
+                                                    hx-post="/run/unpause?group=${group}&name=${name}"
                                                     hx-swap="none">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                     <circle cx="12" cy="12" r="10"/>
