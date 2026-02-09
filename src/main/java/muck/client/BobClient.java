@@ -100,7 +100,6 @@ public class BobClient {
                 return List.of();
             }
 
-            // Bob API returns: {"message": [...]} wrapper
             Map<String, Object> body = response.as(Map.class);
             List<Map<String, Object>> pipelinesData = (List<Map<String, Object>>) body.get("message");
 
