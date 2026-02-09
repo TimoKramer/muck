@@ -1,44 +1,42 @@
 <#import "layout.ftl" as layout>
 
 <@layout.page title="Logs - Muck" activePage="pipelines">
-    <div class="card bg-base-100 shadow-sm">
-        <div class="card-body">
-            <div class="flex items-center justify-between mb-4">
-                <a href="/runs?group=${group}&name=${name}" class="btn btn-ghost btn-sm gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Back
-                </a>
-                <#if connected>
-                    <div class="badge badge-outline badge-sm gap-1 text-success border-success" title="${bobUrl}">
-                        <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
-                        Connected
-                    </div>
-                <#else>
-                    <div class="badge badge-outline badge-sm gap-1 text-error border-error">
-                        <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                        Disconnected
-                    </div>
-                </#if>
+    <div class="flex items-center justify-between p-4 border-b border-base-300">
+        <div class="flex items-center gap-3">
+            <a href="/runs?group=${group}&name=${name}" class="btn btn-ghost btn-sm btn-circle">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </a>
+            <div>
+                <h2 class="font-semibold text-lg">Logs</h2>
+                <div class="font-mono text-sm text-base-content/60">${run}</div>
             </div>
-
-            <div class="mb-4">
-                <h2 class="text-xl font-semibold">Logs</h2>
-                <div class="font-mono text-sm text-base-content/60 mt-1">${run}</div>
+        </div>
+        <#if connected>
+            <div class="badge badge-outline badge-sm gap-1 text-success border-success" title="${bobUrl}">
+                <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
+                Connected
             </div>
-
-            <textarea
-                id="logs-output"
-                class="w-full font-mono text-xs bg-base-200 rounded-lg p-4 border border-base-300"
-                style="min-height: 500px; resize: vertical;"
-                readonly
-                placeholder="Loading logs..."></textarea>
-
-            <div id="logs-status" class="text-sm text-base-content/60 mt-2">
-                <span class="loading loading-spinner loading-xs"></span>
-                Connecting...
+        <#else>
+            <div class="badge badge-outline badge-sm gap-1 text-error border-error">
+                <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                Disconnected
             </div>
+        </#if>
+    </div>
+
+    <div class="p-4">
+        <textarea
+            id="logs-output"
+            class="w-full font-mono text-xs bg-base-200 rounded-lg p-4 border border-base-300"
+            style="min-height: 500px; resize: vertical;"
+            readonly
+            placeholder="Loading logs..."></textarea>
+
+        <div id="logs-status" class="text-sm text-base-content/60 mt-2">
+            <span class="loading loading-spinner loading-xs"></span>
+            Connecting...
         </div>
     </div>
 

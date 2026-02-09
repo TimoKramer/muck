@@ -2,31 +2,30 @@
 
 <@layout.page title="Settings - Muck" activePage="settings">
     <div id="settings-page" data-signals="{activeTab: 'resource-providers', newName: '', newUrl: ''}">
-        <div class="card bg-base-100 shadow-sm">
-            <div class="card-body">
-                <div class="flex items-center justify-between mb-4">
-                    <a href="/pipelines" class="btn btn-ghost btn-sm gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        Back
-                    </a>
-                    <#if connected>
-                        <div class="badge badge-outline badge-sm gap-1 text-success border-success" title="${bobUrl}">
-                            <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
-                            Connected
-                        </div>
-                    <#else>
-                        <div class="badge badge-outline badge-sm gap-1 text-error border-error">
-                            <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                            Disconnected
-                        </div>
-                    </#if>
+        <div class="flex items-center justify-between p-4 border-b border-base-300">
+            <div class="flex items-center gap-3">
+                <a href="/pipelines" class="btn btn-ghost btn-sm btn-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </a>
+                <h2 class="font-semibold text-lg">Settings</h2>
+            </div>
+            <#if connected>
+                <div class="badge badge-outline badge-sm gap-1 text-success border-success" title="${bobUrl}">
+                    <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
+                    Connected
                 </div>
+            <#else>
+                <div class="badge badge-outline badge-sm gap-1 text-error border-error">
+                    <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                    Disconnected
+                </div>
+            </#if>
+        </div>
 
-                <h2 class="text-xl font-semibold mb-4">Settings</h2>
-
-                <!-- Tabs -->
+        <div class="p-4">
+            <!-- Tabs -->
                 <div class="tabs tabs-boxed mb-4">
                     <button class="tab"
                             data-class="{'tab-active': $activeTab === 'resource-providers'}"
@@ -233,5 +232,4 @@
                 </div>
             </div>
         </div>
-    </div>
 </@layout.page>
