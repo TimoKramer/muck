@@ -91,9 +91,14 @@ public class BobClient {
     }
 
     public List<Pipeline> listPipelines() {
+        return listPipelines(null, null);
+    }
+
+    public List<Pipeline> listPipelines(String group, String name) {
         try {
             var op = getOperation("PipelineList");
-            var response = executeRequest(op.method(), op.path());
+            var path = group != null && name != null ? op.path() + "?group=" + group + "&name=" + name : op.path();
+            var response = executeRequest(op.method(), path);
 
             if (response.status() != Status.OK_200) {
                 LOGGER.log(Level.WARNING, "Failed to fetch pipelines: {0}", response.status());
@@ -106,7 +111,9 @@ public class BobClient {
             var pipelines = pipelinesData.stream()
                     .map(data -> new Pipeline(
                             (String) data.get("group"),
-                            (String) data.get("name")))
+                            (String) data.get("name"),
+                            "unknown",
+                            data))
                     .toList();
 
             LOGGER.log(Level.FINE, "Fetched {0} pipelines", pipelines.size());

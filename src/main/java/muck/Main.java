@@ -22,6 +22,7 @@ import muck.handlers.CreateResourceProviderHandler;
 import muck.handlers.DeleteArtifactStoreHandler;
 import muck.handlers.DeleteLoggerHandler;
 import muck.handlers.DeletePipelineHandler;
+import muck.handlers.DownloadPipelineDefinitionHandler;
 import muck.handlers.DeleteResourceProviderHandler;
 import muck.handlers.FetchArtifactHandler;
 import muck.handlers.HomeHandler;
@@ -96,6 +97,7 @@ public class Main {
                 .post("/start", new StartPipelineHandler(bobLogger, bobClient))
                 .post("/create", new CreatePipelineHandler(bobClient))
                 .delete("/delete", new DeletePipelineHandler(bobClient))
+                .get("/pipeline/yaml", new DownloadPipelineDefinitionHandler(bobClient))
 
                 // Pipeline run controls
                 .post("/run/stop", new StopPipelineHandler(bobClient))

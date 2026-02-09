@@ -10,12 +10,18 @@
         <div id="htmx-content">
             <div class="flex items-center justify-between p-4 border-b border-base-300">
                 <h2 class="font-semibold text-lg">Pipelines</h2>
-                <button class="btn btn-primary btn-sm" onclick="createPipelineModal.showModal()">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-                    New Pipeline
-                </button>
+                <div class="dropdown dropdown-end">
+                    <div tabindex="0" role="button" class="btn btn-primary btn-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>
+                        New Pipeline
+                    </div>
+                    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-10 w-48 p-2 shadow-lg border border-base-300">
+                        <li><a onclick="createPipelineModal.showModal()">Manual Form</a></li>
+                        <li><a onclick="uploadPipelineModal.showModal()">Upload File</a></li>
+                    </ul>
+                </div>
             </div>
 
             <div class="p-4">
@@ -86,7 +92,7 @@
         </div>
     </div>
 
-    <!-- Create Pipeline Modal -->
+    <!-- Create Pipeline Modal (Manual Form) -->
     <dialog id="createPipelineModal" class="modal">
         <div class="modal-box max-w-2xl">
             <h3 class="font-bold text-lg mb-4">Create Pipeline</h3>
@@ -150,10 +156,34 @@
         </form>
     </dialog>
 
+    <!-- Upload Pipeline Modal -->
+    <dialog id="uploadPipelineModal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg mb-4">Upload Pipeline Definition</h3>
+            <form id="uploadPipelineForm" class="space-y-4">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Pipeline definition file (YAML or JSON)</span>
+                    </label>
+                    <input type="file" id="pipelineFile" accept=".yaml,.yml,.json"
+                           class="file-input file-input-bordered w-full" required>
+                </div>
+                <div id="uploadPipelineError" class="alert alert-error hidden"></div>
+                <div class="modal-action">
+                    <button type="button" class="btn" onclick="uploadPipelineModal.close()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
     <script>
         document.body.addEventListener('htmx:afterRequest', function(evt) {
             if (evt.detail.elt.id === 'createPipelineForm') {
-                const errorDiv = document.getElementById('createPipelineError');
+                var errorDiv = document.getElementById('createPipelineError');
                 if (evt.detail.successful) {
                     createPipelineModal.close();
                     evt.detail.elt.reset();
@@ -161,10 +191,36 @@
                     htmx.ajax('GET', '/pipelines', {target: '#htmx-content', swap: 'innerHTML', select: '#htmx-content'});
                 } else {
                     errorDiv.classList.remove('hidden');
-                    const errorText = evt.detail.xhr.responseText || 'Failed to create pipeline';
-                    errorDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span>' + errorText + '</span>';
+                    errorDiv.textContent = evt.detail.xhr.responseText || 'Failed to create pipeline';
                 }
             }
+        });
+
+        document.getElementById('uploadPipelineForm').addEventListener('submit', function(evt) {
+            evt.preventDefault();
+            var file = document.getElementById('pipelineFile').files[0];
+            var errorDiv = document.getElementById('uploadPipelineError');
+            if (!file) return;
+
+            file.text().then(function(content) {
+                var type = file.name.endsWith('.json') ? 'application/json' : 'application/x-yaml';
+                return fetch('/create', {method: 'POST', headers: {'Content-Type': type}, body: content});
+            }).then(function(res) {
+                if (res.ok) {
+                    uploadPipelineModal.close();
+                    evt.target.reset();
+                    errorDiv.classList.add('hidden');
+                    htmx.ajax('GET', '/pipelines', {target: '#htmx-content', swap: 'innerHTML', select: '#htmx-content'});
+                } else {
+                    return res.text().then(function(t) {
+                        errorDiv.classList.remove('hidden');
+                        errorDiv.textContent = t || 'Failed to create pipeline';
+                    });
+                }
+            }).catch(function(err) {
+                errorDiv.classList.remove('hidden');
+                errorDiv.textContent = err.message;
+            });
         });
     </script>
 </@layout.page>

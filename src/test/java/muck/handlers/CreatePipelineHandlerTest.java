@@ -35,7 +35,8 @@ class CreatePipelineHandlerTest {
 
     @AfterAll
     static void tearDown() {
-        if (server != null) server.stop();
+        if (server != null)
+            server.stop();
     }
 
     @Test
