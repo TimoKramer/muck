@@ -20,22 +20,28 @@
 
             <div class="p-4">
                 <#if pipelines?has_content>
-                    <div class="space-y-3">
-                        <#list pipelines as pipeline>
-                            <a class="block"
-                               hx-get="/runs?group=${pipeline.group}&name=${pipeline.name}"
-                               hx-target="#htmx-container"
-                               hx-select="#htmx-container"
-                               hx-swap="outerHTML"
-                               hx-indicator="#loading-indicator"
-                               hx-push-url="true">
-                                <div class="rounded-lg border border-base-300 bg-base-100 hover:border-base-content/20 transition-colors duration-150 cursor-pointer p-4">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex-1">
-                                            <h3 class="font-medium">${pipeline.name}</h3>
-                                            <div class="text-sm text-base-content/60 mt-1">${pipeline.group}</div>
-                                        </div>
-                                        <div class="flex items-center gap-2">
+                    <div class="overflow-x-auto">
+                        <table class="table table-lg">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Group</th>
+                                    <th>Status</th>
+                                    <th class="w-20">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <#list pipelines as pipeline>
+                                    <tr class="hover cursor-pointer"
+                                        hx-get="/runs?group=${pipeline.group}&name=${pipeline.name}"
+                                        hx-target="#htmx-container"
+                                        hx-select="#htmx-container"
+                                        hx-swap="outerHTML"
+                                        hx-indicator="#loading-indicator"
+                                        hx-push-url="true">
+                                        <td class="font-medium">${pipeline.name}</td>
+                                        <td class="text-sm text-base-content/60">${pipeline.group}</td>
+                                        <td>
                                             <#if pipeline.status == "running">
                                                 <span class="badge badge-outline badge-sm gap-1 text-info border-info">
                                                     <span class="loading loading-spinner loading-xs"></span>
@@ -48,6 +54,8 @@
                                             <#else>
                                                 <span class="badge badge-outline badge-sm">${pipeline.status}</span>
                                             </#if>
+                                        </td>
+                                        <td>
                                             <button class="btn btn-ghost btn-xs btn-circle"
                                                     hx-post="/start?group=${pipeline.group}&name=${pipeline.name}"
                                                     hx-swap="none"
@@ -57,11 +65,11 @@
                                                     <path d="M10 8l6 4-6 4V8z" fill="currentColor" stroke="none"/>
                                                 </svg>
                                             </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </#list>
+                                        </td>
+                                    </tr>
+                                </#list>
+                            </tbody>
+                        </table>
                     </div>
                 <#else>
                     <div class="alert alert-warning">

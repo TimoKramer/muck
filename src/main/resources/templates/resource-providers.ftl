@@ -21,7 +21,7 @@
             <div class="p-4">
                 <#if providers?has_content>
                     <div class="overflow-x-auto">
-                        <table class="table table-sm">
+                        <table class="table table-lg">
                             <thead>
                                 <tr>
                                     <th>Name</th>

@@ -55,7 +55,7 @@
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="table table-sm">
+                        <table class="table table-lg">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -104,7 +104,7 @@
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="table table-sm">
+                        <table class="table table-lg">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -153,7 +153,7 @@
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="table table-sm">
+                        <table class="table table-lg">
                             <thead>
                                 <tr>
                                     <th>Name</th>

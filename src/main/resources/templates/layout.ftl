@@ -32,7 +32,7 @@
                     <span class="font-semibold text-xl">Bob the Builder</span>
                 </a>
             </div>
-            <ul class="menu p-4 gap-1 flex-1">
+            <ul class="menu menu-md p-4 gap-1 flex-1">
                 <li>
                     <a href="/pipelines" class="<#if activePage == 'pipelines'>active</#if>">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
