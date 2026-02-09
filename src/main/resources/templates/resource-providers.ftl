@@ -111,7 +111,7 @@
                     createProviderModal.close();
                     evt.detail.elt.reset();
                     errorDiv.classList.add('hidden');
-                    htmx.ajax('GET', '/resource-providers', {target: '#htmx-container', swap: 'outerHTML'});
+                    htmx.ajax('GET', '/resource-providers', {target: '#htmx-content', swap: 'innerHTML', select: '#htmx-content'});
                 } else {
                     errorDiv.classList.remove('hidden');
                     var errorText = evt.detail.xhr.responseText || 'Failed to create resource provider';

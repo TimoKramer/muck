@@ -111,7 +111,7 @@
                     createLoggerModal.close();
                     evt.detail.elt.reset();
                     errorDiv.classList.add('hidden');
-                    htmx.ajax('GET', '/loggers', {target: '#htmx-container', swap: 'outerHTML'});
+                    htmx.ajax('GET', '/loggers', {target: '#htmx-content', swap: 'innerHTML', select: '#htmx-content'});
                 } else {
                     errorDiv.classList.remove('hidden');
                     var errorText = evt.detail.xhr.responseText || 'Failed to create logger';

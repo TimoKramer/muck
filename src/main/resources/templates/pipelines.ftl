@@ -158,7 +158,7 @@
                     createPipelineModal.close();
                     evt.detail.elt.reset();
                     errorDiv.classList.add('hidden');
-                    htmx.ajax('GET', '/pipelines', {target: '#htmx-container', swap: 'outerHTML'});
+                    htmx.ajax('GET', '/pipelines', {target: '#htmx-content', swap: 'innerHTML', select: '#htmx-content'});
                 } else {
                     errorDiv.classList.remove('hidden');
                     const errorText = evt.detail.xhr.responseText || 'Failed to create pipeline';
