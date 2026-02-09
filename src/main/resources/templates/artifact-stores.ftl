@@ -1,6 +1,6 @@
 <#import "layout.ftl" as layout>
 
-<@layout.page title="Artifact Stores - Muck" activePage="artifact-stores">
+<@layout.page title="Artifact Stores - Muck" activePage="artifact-stores" connected=connected bobUrl=bobUrl>
     <div id="htmx-container"
          hx-get="/artifact-stores"
          hx-trigger="every 10s"
@@ -10,25 +10,12 @@
         <div id="htmx-content">
             <div class="flex items-center justify-between p-4 border-b border-base-300">
                 <h2 class="font-semibold text-lg">Artifact Stores</h2>
-                <div class="flex items-center gap-2">
-                    <button class="btn btn-primary btn-sm" onclick="createStoreModal.showModal()">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                        </svg>
-                        New Store
-                    </button>
-                    <#if connected>
-                        <div class="badge badge-outline badge-sm gap-1 text-success border-success" title="${bobUrl}">
-                            <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
-                            Connected
-                        </div>
-                    <#else>
-                        <div class="badge badge-outline badge-sm gap-1 text-error border-error">
-                            <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                            Disconnected
-                        </div>
-                    </#if>
-                </div>
+                <button class="btn btn-primary btn-sm" onclick="createStoreModal.showModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    New Store
+                </button>
             </div>
 
             <div class="p-4">

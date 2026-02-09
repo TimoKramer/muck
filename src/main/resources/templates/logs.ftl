@@ -1,6 +1,6 @@
 <#import "layout.ftl" as layout>
 
-<@layout.page title="Logs - Muck" activePage="pipelines">
+<@layout.page title="Logs - Muck" activePage="pipelines" connected=connected bobUrl=bobUrl>
     <div class="flex items-center justify-between p-4 border-b border-base-300">
         <div class="flex items-center gap-3">
             <a href="/runs?group=${group}&name=${name}" class="btn btn-ghost btn-sm btn-circle">
@@ -13,17 +13,6 @@
                 <div class="font-mono text-sm text-base-content/60">${run}</div>
             </div>
         </div>
-        <#if connected>
-            <div class="badge badge-outline badge-sm gap-1 text-success border-success" title="${bobUrl}">
-                <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
-                Connected
-            </div>
-        <#else>
-            <div class="badge badge-outline badge-sm gap-1 text-error border-error">
-                <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                Disconnected
-            </div>
-        </#if>
     </div>
 
     <div class="p-4">

@@ -1,4 +1,4 @@
-<#macro page title activePage="">
+<#macro page title activePage="" connected=false bobUrl="">
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -25,14 +25,14 @@
 <body class="min-h-screen bg-base-100">
     <div class="flex min-h-screen">
         <!-- Sidebar -->
-        <nav class="w-64 border-r border-base-300 flex-shrink-0">
+        <nav class="w-64 border-r border-base-300 flex-shrink-0 flex flex-col">
             <div class="p-4 border-b border-base-300">
                 <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
                     <img src="/static/favicon.svg" alt="Bob" class="w-8 h-8">
-                    <span class="font-semibold text-lg">Muck</span>
+                    <span class="font-semibold text-xl">Bob the Builder</span>
                 </a>
             </div>
-            <ul class="menu p-4 gap-1">
+            <ul class="menu p-4 gap-1 flex-1">
                 <li>
                     <a href="/pipelines" class="<#if activePage == 'pipelines'>active</#if>">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -66,6 +66,19 @@
                     </a>
                 </li>
             </ul>
+            <div class="p-4 border-t border-base-300">
+                <#if connected>
+                    <div class="badge badge-outline badge-sm gap-1 text-success border-success" title="${bobUrl}">
+                        <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
+                        Connected
+                    </div>
+                <#else>
+                    <div class="badge badge-outline badge-sm gap-1 text-error border-error">
+                        <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                        Disconnected
+                    </div>
+                </#if>
+            </div>
         </nav>
 
         <!-- Main content -->

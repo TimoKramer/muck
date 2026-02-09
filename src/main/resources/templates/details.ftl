@@ -1,6 +1,6 @@
 <#import "layout.ftl" as layout>
 
-<@layout.page title="Runs - Muck" activePage="pipelines">
+<@layout.page title="Runs - Muck" activePage="pipelines" connected=connected bobUrl=bobUrl>
     <div id="htmx-container"
          hx-get=""
          hx-trigger="every 10s"
@@ -46,17 +46,6 @@
                         </svg>
                         Delete
                     </button>
-                    <#if connected>
-                        <div class="badge badge-outline badge-sm gap-1 text-success border-success" title="${bobUrl}">
-                            <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
-                            Connected
-                        </div>
-                    <#else>
-                        <div class="badge badge-outline badge-sm gap-1 text-error border-error">
-                            <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                            Disconnected
-                        </div>
-                    </#if>
                 </div>
             </div>
 
