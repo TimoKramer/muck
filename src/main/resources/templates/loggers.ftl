@@ -33,7 +33,7 @@
                             <tbody>
                                 <#list loggers as logger>
                                     <tr class="hover">
-                                        <td class="font-mono">${logger.name!""}</td>
+                                        <td class="font-medium">${logger.name!""}</td>
                                         <td class="text-sm">${logger.url!""}</td>
                                         <td>
                                             <button class="btn btn-ghost btn-xs text-error"

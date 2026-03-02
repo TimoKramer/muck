@@ -33,7 +33,7 @@
                             <tbody>
                                 <#list providers as provider>
                                     <tr class="hover">
-                                        <td class="font-mono">${provider.name!""}</td>
+                                        <td class="font-medium">${provider.name!""}</td>
                                         <td class="text-sm">${provider.url!""}</td>
                                         <td>
                                             <button class="btn btn-ghost btn-xs text-error"

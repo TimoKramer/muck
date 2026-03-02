@@ -33,7 +33,7 @@
                             <tbody>
                                 <#list stores as store>
                                     <tr class="hover">
-                                        <td class="font-mono">${store.name!""}</td>
+                                        <td class="font-medium">${store.name!""}</td>
                                         <td class="text-sm">${store.url!""}</td>
                                         <td>
                                             <button class="btn btn-ghost btn-xs text-error"
