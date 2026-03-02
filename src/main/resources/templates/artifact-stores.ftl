@@ -1,13 +1,14 @@
 <#import "layout.ftl" as layout>
 
 <@layout.page title="Artifact Stores - Muck" activePage="artifact-stores" connected=connected bobUrl=bobUrl>
-    <div id="htmx-container"
-         hx-get="/artifact-stores"
-         hx-trigger="every 10s"
-         hx-target="this"
-         hx-select="#htmx-content"
-         hx-indicator="#loading-indicator">
-        <div id="htmx-content">
+    <div id="htmx-container">
+        <div id="htmx-content"
+             hx-get="/artifact-stores"
+             hx-trigger="every 10s"
+             hx-target="#htmx-container"
+             hx-select="#htmx-content"
+             hx-swap="innerHTML"
+             hx-indicator="#loading-indicator">
             <div class="flex items-center justify-between p-4 border-b border-base-300">
                 <h2 class="font-semibold text-lg">Artifact Stores</h2>
                 <button class="btn btn-neutral btn-sm" onclick="createStoreModal.showModal()">

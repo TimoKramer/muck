@@ -1,9 +1,12 @@
 package muck.handlers;
 
 import java.io.StringWriter;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import muck.model.Pipeline;
 
 import freemarker.template.Configuration;
 import io.helidon.http.Status;
@@ -26,7 +29,19 @@ public class PipelinesHandler implements Handler {
     @Override
     public void handle(ServerRequest req, ServerResponse res) {
         try {
-            var pipelines = bobClient.listPipelinesWithStatus();
+            var sortField = req.query().first("sort").orElse("name");
+            var sortDir = req.query().first("dir").orElse("asc");
+
+            Comparator<Pipeline> comparator = switch (sortField) {
+                case "group" -> Comparator.comparing(Pipeline::group);
+                case "status" -> Comparator.comparing(Pipeline::status);
+                default -> Comparator.comparing(Pipeline::name);
+            };
+            if ("desc".equals(sortDir)) {
+                comparator = comparator.reversed();
+            }
+
+            var pipelines = bobClient.listPipelinesWithStatus().stream().sorted(comparator).toList();
             var loggers = bobClient.listLoggers();
 
             var template = freemarkerConfig.getTemplate("pipelines.ftl");
@@ -34,6 +49,8 @@ public class PipelinesHandler implements Handler {
             var model = new HashMap<String, Object>();
             model.put("bobUrl", bobClient.getBaseUrl());
             model.put("pipelines", pipelines);
+            model.put("sortField", sortField);
+            model.put("sortDir", sortDir);
             model.put("connected", bobClient.checkHealth());
             model.put("loggers", loggers);
 

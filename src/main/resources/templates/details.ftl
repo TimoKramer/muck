@@ -1,13 +1,14 @@
 <#import "layout.ftl" as layout>
 
 <@layout.page title="Runs - Muck" activePage="pipelines" connected=connected bobUrl=bobUrl>
-    <div id="htmx-container"
-         hx-get=""
-         hx-trigger="every 10s"
-         hx-target="this"
-         hx-select="#htmx-content"
-         hx-indicator="#loading-indicator">
-        <div id="htmx-content">
+    <div id="htmx-container">
+        <div id="htmx-content"
+             hx-get=""
+             hx-trigger="every 10s"
+             hx-target="#htmx-container"
+             hx-select="#htmx-content"
+             hx-swap="innerHTML"
+             hx-indicator="#loading-indicator">
             <div class="flex items-center justify-between p-4 border-b border-base-300">
                 <div class="flex items-center gap-3">
                     <a href="/pipelines" hx-boost="true" class="btn btn-ghost btn-sm btn-circle">

@@ -1,13 +1,16 @@
 <#import "layout.ftl" as layout>
+<#assign sortField = sortField!"name">
+<#assign sortDir = sortDir!"asc">
 
 <@layout.page title="Pipelines - Muck" activePage="pipelines" connected=connected bobUrl=bobUrl>
-    <div id="htmx-container"
-         hx-get="/pipelines"
-         hx-trigger="every 10s"
-         hx-target="this"
-         hx-select="#htmx-content"
-         hx-indicator="#loading-indicator">
-        <div id="htmx-content">
+    <div id="htmx-container">
+        <div id="htmx-content"
+             hx-get="/pipelines?sort=${sortField}&dir=${sortDir}"
+             hx-trigger="every 10s"
+             hx-target="#htmx-container"
+             hx-select="#htmx-content"
+             hx-swap="innerHTML"
+             hx-indicator="#loading-indicator">
             <div class="flex items-center justify-between p-4 border-b border-base-300">
                 <h2 class="font-semibold text-lg">Pipelines</h2>
                 <div class="dropdown dropdown-end">
@@ -30,9 +33,24 @@
                         <table class="table table-lg">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Group</th>
-                                    <th>Status</th>
+                                    <#list [
+                                        {"field": "name", "label": "Name"},
+                                        {"field": "group", "label": "Group"},
+                                        {"field": "status", "label": "Status"}
+                                    ] as col>
+                                        <th>
+                                            <a hx-get="/pipelines?sort=${col.field}&dir=<#if sortField == col.field && sortDir == 'asc'>desc<#else>asc</#if>"
+                                               hx-target="#htmx-container"
+                                               hx-select="#htmx-content"
+                                               hx-swap="innerHTML"
+                                               class="cursor-pointer select-none inline-flex items-center gap-1">
+                                                ${col.label}
+                                                <#if sortField == col.field>
+                                                    <span class="text-xs"><#if sortDir == 'asc'>&#9650;<#else>&#9660;</#if></span>
+                                                </#if>
+                                            </a>
+                                        </th>
+                                    </#list>
                                     <th class="w-20">Actions</th>
                                 </tr>
                             </thead>
