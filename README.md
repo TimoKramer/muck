@@ -20,11 +20,7 @@ A modern web-based monitoring application for [Bob CI/CD](https://github.com/bob
 
 ### 1. Start Bob CI/CD
 
-Using the included docker-compose:
-
-```bash
-docker-compose up -d
-```
+[Using compose or kubernetes](https://bob-cd.github.io/getting-started/)
 
 This will start:
 - Bob API server (port 7777)
@@ -69,6 +65,10 @@ Edit `src/main/resources/application.yaml` to configure:
 server:
   port: 7999        # Web server port
   host: "0.0.0.0"   # Bind address
+
+dev-mode: false # auto reload freemarker templates
+
+locale: en_us # set locale for date formatting
 
 bob:
   url: "http://localhost:7777"  # Bob API URL
