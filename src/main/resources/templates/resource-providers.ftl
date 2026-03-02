@@ -10,7 +10,7 @@
         <div id="htmx-content">
             <div class="flex items-center justify-between p-4 border-b border-base-300">
                 <h2 class="font-semibold text-lg">Resource Providers</h2>
-                <button class="btn btn-primary btn-sm" onclick="createProviderModal.showModal()">
+                <button class="btn btn-neutral btn-sm" onclick="createProviderModal.showModal()">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
@@ -91,7 +91,7 @@
                 </div>
                 <div class="modal-action">
                     <button type="button" class="btn" onclick="createProviderModal.close()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-neutral">
                         <span class="loading loading-spinner loading-sm htmx-indicator" id="createProviderLoading"></span>
                         Add
                     </button>
@@ -111,16 +111,15 @@
                     createProviderModal.close();
                     evt.detail.elt.reset();
                     errorDiv.classList.add('hidden');
-                    htmx.ajax('GET', '/resource-providers', {target: '#htmx-content', swap: 'innerHTML', select: '#htmx-content'});
+                    htmx.ajax('GET', '/resource-providers', {target: '#htmx-container', swap: 'innerHTML', select: '#htmx-content'});
                 } else {
                     errorDiv.classList.remove('hidden');
-                    var errorText = evt.detail.xhr.responseText || 'Failed to create resource provider';
-                    errorDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span>' + errorText + '</span>';
+                    errorDiv.textContent = evt.detail.xhr.responseText || 'Failed to create resource provider';
                 }
             }
 
             if (evt.detail.requestConfig && evt.detail.requestConfig.verb === 'delete' && evt.detail.successful) {
-                htmx.ajax('GET', '/resource-providers', {target: '#htmx-container', swap: 'outerHTML'});
+                htmx.ajax('GET', '/resource-providers', {target: '#htmx-container', swap: 'innerHTML', select: '#htmx-content'});
             }
         });
     </script>

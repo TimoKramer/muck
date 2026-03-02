@@ -87,7 +87,13 @@ public class BobClient {
     }
 
     private Http1ClientResponse executeRequest(Method method, String path) {
-        return client.method(method).path(path).request();
+        return executeRequest(method, path, Map.of());
+    }
+
+    private Http1ClientResponse executeRequest(Method method, String path, Map<String, String> queryParams) {
+        var req = client.method(method).path(path);
+        queryParams.forEach(req::queryParam);
+        return req.request();
     }
 
     public List<Pipeline> listPipelines() {
@@ -97,8 +103,8 @@ public class BobClient {
     public List<Pipeline> listPipelines(String group, String name) {
         try {
             var op = getOperation("PipelineList");
-            var path = group != null && name != null ? op.path() + "?group=" + group + "&name=" + name : op.path();
-            var response = executeRequest(op.method(), path);
+            var queryParams = group != null && name != null ? Map.of("group", group, "name", name) : Map.<String, String>of();
+            var response = executeRequest(op.method(), op.path(), queryParams);
 
             if (response.status() != Status.OK_200) {
                 LOGGER.log(Level.WARNING, "Failed to fetch pipelines: {0}", response.status());
@@ -268,7 +274,6 @@ public class BobClient {
                     .path(op.path())
                     .header(HeaderNames.CONTENT_TYPE, "application/json")
                     .submit(body);
-
             return response.status() == Status.ACCEPTED_202;
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error creating pipeline", e);

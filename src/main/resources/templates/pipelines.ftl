@@ -11,7 +11,7 @@
             <div class="flex items-center justify-between p-4 border-b border-base-300">
                 <h2 class="font-semibold text-lg">Pipelines</h2>
                 <div class="dropdown dropdown-end">
-                    <div tabindex="0" role="button" class="btn btn-primary btn-sm">
+                    <div tabindex="0" role="button" class="btn btn-neutral btn-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
@@ -41,8 +41,8 @@
                                     <tr class="hover cursor-pointer"
                                         hx-get="/runs?group=${pipeline.group}&name=${pipeline.name}"
                                         hx-target="#htmx-container"
-                                        hx-select="#htmx-container"
-                                        hx-swap="outerHTML"
+                                        hx-select="#htmx-content"
+                                        hx-swap="innerHTML"
                                         hx-indicator="#loading-indicator"
                                         hx-push-url="true">
                                         <td class="font-medium">${pipeline.name}</td>
@@ -144,7 +144,7 @@
                 </div>
                 <div class="modal-action">
                     <button type="button" class="btn" onclick="createPipelineModal.close()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-neutral">
                         <span class="loading loading-spinner loading-sm htmx-indicator" id="createPipelineLoading"></span>
                         Create
                     </button>
@@ -171,7 +171,7 @@
                 <div id="uploadPipelineError" class="alert alert-error hidden"></div>
                 <div class="modal-action">
                     <button type="button" class="btn" onclick="uploadPipelineModal.close()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Upload</button>
+                    <button type="submit" class="btn btn-neutral">Upload</button>
                 </div>
             </form>
         </div>
@@ -188,7 +188,7 @@
                     createPipelineModal.close();
                     evt.detail.elt.reset();
                     errorDiv.classList.add('hidden');
-                    htmx.ajax('GET', '/pipelines', {target: '#htmx-content', swap: 'innerHTML', select: '#htmx-content'});
+                    htmx.ajax('GET', '/pipelines', {target: '#htmx-container', swap: 'innerHTML', select: '#htmx-content'});
                 } else {
                     errorDiv.classList.remove('hidden');
                     errorDiv.textContent = evt.detail.xhr.responseText || 'Failed to create pipeline';
@@ -210,7 +210,7 @@
                     uploadPipelineModal.close();
                     evt.target.reset();
                     errorDiv.classList.add('hidden');
-                    htmx.ajax('GET', '/pipelines', {target: '#htmx-content', swap: 'innerHTML', select: '#htmx-content'});
+                    htmx.ajax('GET', '/pipelines', {target: '#htmx-container', swap: 'innerHTML', select: '#htmx-content'});
                 } else {
                     return res.text().then(function(t) {
                         errorDiv.classList.remove('hidden');

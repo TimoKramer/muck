@@ -114,6 +114,7 @@ public class CreatePipelineHandler implements Handler {
         }
         var yaml = new Yaml();
         Map<String, Object> parsed = yaml.load(content);
-        return MAPPER.writeValueAsString(parsed);
+        var pipeline = parsed.containsKey("spec") ? (Map<String, Object>) parsed.get("spec") : parsed;
+        return MAPPER.writeValueAsString(pipeline);
     }
 }
