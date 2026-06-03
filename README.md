@@ -72,6 +72,7 @@ locale: en_us # set locale for date formatting
 
 bob:
   url: "http://localhost:7777"  # Bob API URL
+  logger: "logger-local" # Default Logger
 ```
 
 ## Technology Stack
