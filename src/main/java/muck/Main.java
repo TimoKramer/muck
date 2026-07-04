@@ -53,9 +53,7 @@ public class Main {
             var serverConfig = config.get("server");
             var locale = Locale.forLanguageTag(config.get("locale").asString().orElse("en_us"));
 
-            freemarkerConfig = createFreemarkerConfig(devMode);
-            freemarkerConfig.setLocale(locale);
-            freemarkerConfig.setOutputFormat(HTMLOutputFormat.INSTANCE);
+            freemarkerConfig = createFreemarkerConfig(devMode, locale);
 
             var bobUrl = config.get("bob.url")
                     .asString()
@@ -130,7 +128,7 @@ public class Main {
                 .get("/health", (req, res) -> res.send("OK"));
     }
 
-    private static Configuration createFreemarkerConfig(boolean devMode) throws IOException {
+    static Configuration createFreemarkerConfig(boolean devMode, Locale locale) throws IOException {
         var cfg = new Configuration(Configuration.VERSION_2_3_33);
         if (devMode) {
             cfg.setDirectoryForTemplateLoading(new File("src/main/resources/templates"));
@@ -142,6 +140,8 @@ public class Main {
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         cfg.setLogTemplateExceptions(false);
         cfg.setWrapUncheckedExceptions(true);
+        cfg.setLocale(locale);
+        cfg.setOutputFormat(HTMLOutputFormat.INSTANCE);
         return cfg;
     }
 }
