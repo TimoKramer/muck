@@ -21,7 +21,7 @@
                         New Pipeline
                     </div>
                     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-10 w-48 p-2 shadow-lg border border-base-300">
-                        <li><a onclick="createPipelineModal.showModal()">Manual Form</a></li>
+                        <li><a onclick="createPipelineModal.showModal()">Paste YAML</a></li>
                         <li><a onclick="uploadPipelineModal.showModal()">Upload File</a></li>
                     </ul>
                 </div>
@@ -119,44 +119,17 @@
                   hx-target="#createPipelineError"
                   hx-swap="innerHTML"
                   hx-indicator="#createPipelineLoading">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="form-control">
-                        <label class="label">
-                            <span class="label-text">Group</span>
-                        </label>
-                        <input type="text" name="group" placeholder="e.g., dev"
-                               class="input input-bordered w-full" required>
-                    </div>
-                    <div class="form-control">
-                        <label class="label">
-                            <span class="label-text">Name</span>
-                        </label>
-                        <input type="text" name="name" placeholder="e.g., my-pipeline"
-                               class="input input-bordered w-full" required>
-                    </div>
-                </div>
                 <div class="form-control">
                     <label class="label">
-                        <span class="label-text">Image</span>
+                        <span class="label-text">Pipeline definition (YAML)</span>
                     </label>
-                    <input type="text" name="image" placeholder="e.g., alpine:latest"
-                           class="input input-bordered w-full" required>
-                </div>
-                <div class="form-control">
+                    <textarea id="pipelineDefinition" name="definition"
+                              class="textarea textarea-bordered w-full h-96 font-mono text-sm"
+                              placeholder="group: dev&#10;name: my-pipeline&#10;image: alpine:latest&#10;steps:&#10;  - cmd: echo Hello World&#10;  - cmd: ./build.sh&#10;    needs_resource: source&#10;vars:&#10;  LOG_LEVEL: info&#10;resources:&#10;  - name: source&#10;    type: external&#10;    provider: git&#10;    params:&#10;      repo: https://github.com/example/repo&#10;      branch: main&#10;quotas:&#10;  requests:&#10;    mem: 256Mi&#10;  limits:&#10;    cpu: 500m&#10;    mem: 512Mi"
+                              required></textarea>
                     <label class="label">
-                        <span class="label-text">Steps (one command per line)</span>
+                        <span class="label-text-alt text-base-content/60">Required: group, name, image, steps. Optional: vars, resources, quotas.</span>
                     </label>
-                    <textarea name="steps"
-                              placeholder="echo Hello World&#10;ls -la&#10;echo Done"
-                              class="textarea textarea-bordered w-full h-32" required></textarea>
-                </div>
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text">Environment Variables (optional, KEY=VALUE per line)</span>
-                    </label>
-                    <textarea name="vars"
-                              placeholder="DEBUG=true&#10;LOG_LEVEL=info"
-                              class="textarea textarea-bordered w-full h-20"></textarea>
                 </div>
                 <div id="createPipelineError" class="alert alert-error hidden">
                 </div>

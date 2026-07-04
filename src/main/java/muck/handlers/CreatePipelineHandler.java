@@ -63,8 +63,13 @@ public class CreatePipelineHandler implements Handler {
         }
     }
 
-    private String handleFormSubmission(ServerRequest req) {
+    private String handleFormSubmission(ServerRequest req) throws Exception {
         var params = req.content().as(io.helidon.common.parameters.Parameters.class);
+
+        var definition = params.first("definition").orElse("");
+        if (!definition.isBlank()) {
+            return parseYamlToJson(definition);
+        }
 
         var group = params.first("group").orElse("");
         var name = params.first("name").orElse("");
@@ -109,11 +114,18 @@ public class CreatePipelineHandler implements Handler {
 
     private String handleYamlUpload(ServerRequest req) throws Exception {
         var content = req.content().as(String.class);
+        return parseYamlToJson(content);
+    }
+
+    private String parseYamlToJson(String content) throws Exception {
         if (content == null || content.isBlank()) {
             return null;
         }
         var yaml = new Yaml();
         Map<String, Object> parsed = yaml.load(content);
+        if (parsed == null) {
+            return null;
+        }
         var pipeline = parsed.containsKey("spec") ? (Map<String, Object>) parsed.get("spec") : parsed;
         return MAPPER.writeValueAsString(pipeline);
     }

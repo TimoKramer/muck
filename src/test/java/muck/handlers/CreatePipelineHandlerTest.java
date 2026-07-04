@@ -6,7 +6,9 @@ import io.helidon.webserver.WebServer;
 import muck.client.BobClient;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -39,6 +41,11 @@ class CreatePipelineHandlerTest {
             server.stop();
     }
 
+    @BeforeEach
+    void resetMock() {
+        reset(bobClient);
+    }
+
     @Test
     void createPipelineSuccess() {
         when(bobClient.createPipeline(anyString())).thenReturn(true);
@@ -58,6 +65,28 @@ class CreatePipelineHandlerTest {
                 .submit("group=dev&name=&image=&steps=");
 
         assertEquals(Status.BAD_REQUEST_400, response.status());
+    }
+
+    @Test
+    void createPipelineFromYamlDefinition() {
+        when(bobClient.createPipeline(anyString())).thenReturn(true);
+
+        var yaml = "group: dev\nname: test\nimage: alpine:latest\nsteps:\n"
+                + "  - cmd: echo hi\n    needs_resource: source\nquotas:\n  requests:\n    mem: 256Mi\n";
+        var body = "definition=" + java.net.URLEncoder.encode(yaml, java.nio.charset.StandardCharsets.UTF_8);
+
+        var response = client.post("/create")
+                .header(io.helidon.http.HeaderNames.CONTENT_TYPE, "application/x-www-form-urlencoded")
+                .submit(body);
+
+        assertEquals(Status.OK_200, response.status());
+
+        var captor = ArgumentCaptor.forClass(String.class);
+        verify(bobClient).createPipeline(captor.capture());
+        var sent = captor.getValue();
+        assertTrue(sent.contains("\"group\":\"dev\""));
+        assertTrue(sent.contains("\"needs_resource\":\"source\""));
+        assertTrue(sent.contains("\"quotas\""));
     }
 
     @Test
