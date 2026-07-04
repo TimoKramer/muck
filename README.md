@@ -1,6 +1,6 @@
 # Muck - Bob CI/CD Monitor
 
-A modern web-based monitoring application for [Bob CI/CD](https://github.com/bob-cd/bob) built with Helidon Nima and HTMX.
+A modern web-based user interface for [Bob CI/CD](https://github.com/bob-cd/bob) built with Helidon Nima and HTMX.
 
 ## Features
 
@@ -24,7 +24,6 @@ A modern web-based monitoring application for [Bob CI/CD](https://github.com/bob
 
 This will start:
 - Bob API server (port 7777)
-- PostgreSQL database
 - RabbitMQ message queue
 - etcd distributed storage
 - Supporting services (runner, artifact store, etc.)
@@ -74,6 +73,12 @@ bob:
   url: "http://localhost:7777"  # Bob API URL
   logger: "logger-local" # Default Logger
 ```
+
+### Default Logger
+
+Currently the apiserver expects that the logger is passed on every run. That means a UI
+needs offer the ability to select a logger for each run and maybe set defaults or cache
+a decision. The current discussion about the logger is [here](https://github.com/bob-cd/bob/discussions/131).
 
 ## Technology Stack
 
