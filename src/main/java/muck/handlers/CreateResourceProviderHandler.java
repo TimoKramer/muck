@@ -7,7 +7,7 @@ import io.helidon.http.Status;
 import io.helidon.webserver.http.Handler;
 import io.helidon.webserver.http.ServerRequest;
 import io.helidon.webserver.http.ServerResponse;
-import jakarta.json.Json;
+import io.helidon.json.JsonObject;
 import muck.client.BobClient;
 
 public class CreateResourceProviderHandler implements Handler {
@@ -33,9 +33,9 @@ public class CreateResourceProviderHandler implements Handler {
                 return;
             }
 
-            var body = Json.createObjectBuilder()
-                    .add("name", name)
-                    .add("url", url)
+            var body = JsonObject.builder()
+                    .set("name", name)
+                    .set("url", url)
                     .build()
                     .toString();
 

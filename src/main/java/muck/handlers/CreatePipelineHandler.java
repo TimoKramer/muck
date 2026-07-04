@@ -1,5 +1,6 @@
 package muck.handlers;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,9 +10,9 @@ import io.helidon.http.Status;
 import io.helidon.webserver.http.Handler;
 import io.helidon.webserver.http.ServerRequest;
 import io.helidon.webserver.http.ServerResponse;
-import jakarta.json.Json;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonObjectBuilder;
+import io.helidon.json.JsonArray;
+import io.helidon.json.JsonObject;
+import io.helidon.json.JsonValue;
 import muck.client.BobClient;
 import org.yaml.snakeyaml.Yaml;
 
@@ -81,32 +82,32 @@ public class CreatePipelineHandler implements Handler {
             return null;
         }
 
-        JsonObjectBuilder pipeline = Json.createObjectBuilder()
-                .add("group", group)
-                .add("name", name)
-                .add("image", image);
+        JsonObject.Builder pipeline = JsonObject.builder()
+                .set("group", group)
+                .set("name", name)
+                .set("image", image);
 
-        JsonArrayBuilder stepsArray = Json.createArrayBuilder();
+        var steps = new ArrayList<JsonValue>();
         for (String line : stepsText.split("\n")) {
             String cmd = line.trim();
             if (!cmd.isEmpty()) {
-                stepsArray.add(Json.createObjectBuilder().add("cmd", cmd));
+                steps.add(JsonObject.builder().set("cmd", cmd).build());
             }
         }
-        pipeline.add("steps", stepsArray);
+        pipeline.set("steps", JsonArray.create(steps));
 
         if (!varsText.isBlank()) {
-            JsonObjectBuilder varsObj = Json.createObjectBuilder();
+            JsonObject.Builder varsObj = JsonObject.builder();
             for (String line : varsText.split("\n")) {
                 String trimmed = line.trim();
                 int eqIdx = trimmed.indexOf('=');
                 if (eqIdx > 0) {
                     String key = trimmed.substring(0, eqIdx).trim();
                     String value = trimmed.substring(eqIdx + 1).trim();
-                    varsObj.add(key, value);
+                    varsObj.set(key, value);
                 }
             }
-            pipeline.add("vars", varsObj);
+            pipeline.set("vars", varsObj.build());
         }
 
         return pipeline.build().toString();
